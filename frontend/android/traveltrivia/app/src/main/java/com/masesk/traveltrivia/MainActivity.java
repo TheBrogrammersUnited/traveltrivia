@@ -21,7 +21,6 @@ import edu.cmu.pocketsphinx.Hypothesis;
 import edu.cmu.pocketsphinx.RecognitionListener;
 import edu.cmu.pocketsphinx.SpeechRecognizer;
 import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
-import edu.cmu.pocketsphinx.demo.R;
 
 import static android.widget.Toast.makeText;
 
@@ -209,17 +208,6 @@ public class MainActivity extends Activity implements
         File menuGrammar = new File(assetsDir, "menu.gram");
         recognizer.addGrammarSearch(MENU_SEARCH, menuGrammar);
 
-        // Create grammar-based search for digit recognition
-        File digitsGrammar = new File(assetsDir, "digits.gram");
-        recognizer.addGrammarSearch(C, digitsGrammar);
-
-        // Create language model search
-        File languageModel = new File(assetsDir, "weather.dmp");
-        recognizer.addNgramSearch(B, languageModel);
-
-        // Phonetic search
-        File phoneticModel = new File(assetsDir, "en-phone.dmp");
-        recognizer.addAllphoneSearch(D, phoneticModel);
     }
 
     @Override
