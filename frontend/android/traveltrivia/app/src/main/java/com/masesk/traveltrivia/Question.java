@@ -26,4 +26,15 @@ public class Question {
     public void setAnswers(String[] answers) {
         this.answers = answers;
     }
+
+    public void fixQuestion(String question){
+        if(question.contains("&#039;")){
+
+        }
+        else if(question.contains("&quot;")){
+
+        }
+
+
+    }
 }

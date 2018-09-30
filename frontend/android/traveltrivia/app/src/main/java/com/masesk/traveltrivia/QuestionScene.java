@@ -3,13 +3,11 @@ package com.masesk.traveltrivia;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,16 +17,19 @@ import org.json.JSONObject;
 import org.scribe.model.Request;
 import org.scribe.model.Response;
 import org.scribe.model.Verb;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Queue;
+
 
 public class QuestionScene extends Activity {
     LinearLayout layout;
     TextView question;
     Queue<Question> questions;
     Button []answerButtons = new Button[4];
+    TextToSpeech tts;
+    String[] answerList = {"A", "Bee", "See", "DEE"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +38,14 @@ public class QuestionScene extends Activity {
         layout.setBackgroundColor(Color.WHITE);
         questions = new LinkedList<Question>();
         question = new TextView(getApplicationContext());
+        tts= new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int i) {
 
+            }
+        });
+
+        tts.setLanguage(Locale.US);
         question.setText("PLEASE WAIT...");
         layout.addView(question);
         for(int i = 0; i < answerButtons.length; i++){
@@ -127,9 +135,14 @@ public class QuestionScene extends Activity {
     }
 
     public void setUpQuestion(){
+        tts.stop();
         question.setText(questions.peek().getQuestion());
         question.setTextSize(20);
+        tts.speak(questions.peek().getQuestion(), TextToSpeech.QUEUE_ADD, null);
+
         for(int i = 0; i < questions.peek().getAnswers().length; i++){
+            tts.speak(answerList[i], TextToSpeech.QUEUE_ADD, null);
+            tts.speak(questions.peek().getAnswers()[i], TextToSpeech.QUEUE_ADD, null);
            answerButtons[i].setText(questions.peek().getAnswers()[i]);
         }
     }
