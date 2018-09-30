@@ -1,17 +1,17 @@
 package com.masesk.traveltrivia;
-
-import android.text.Html;
-import android.util.Log;
-import android.widget.Toast;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Entities;
 import org.jsoup.parser.Parser;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class Question {
     private String question;
     private String[] answers;
+    private String correctAnswer;
 
     public Question(){
 
@@ -36,5 +36,21 @@ public class Question {
 
     public void setAnswers(String[] answers) {
         this.answers = answers;
+        correctAnswer = answers[0];
+        shuffle();
+    }
+
+    public void shuffle(){
+        List<String> list = Arrays.asList(answers);
+        Collections.shuffle(list);
+    }
+
+    public boolean checkCorrectAnswer(String answer){
+        if(answer.equals(this.correctAnswer)){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }

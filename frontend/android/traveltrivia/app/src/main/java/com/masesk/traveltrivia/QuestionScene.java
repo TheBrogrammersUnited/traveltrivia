@@ -14,6 +14,7 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.parser.Parser;
 import org.scribe.model.Request;
 import org.scribe.model.Response;
 import org.scribe.model.Verb;
@@ -23,12 +24,18 @@ import java.util.Queue;
 
 
 public class QuestionScene extends Activity {
-    LinearLayout layout;
-    TextView question;
-    Queue<Question> questions;
-    Button []answerButtons = new Button[4];
-    TextToSpeech tts;
-    String[] answerList = {"A", "Bee", "See", "DEE"};
+    private LinearLayout layout;
+    private TextView question;
+    private TextView answeredView;
+    private TextView askedView;
+    private Queue<Question> questions;
+    private Button []answerButtons = new Button[4];
+    private TextToSpeech tts;
+    private String[] answerList = {"A", "Bee", "See", "Dee"};
+    private boolean doneWithRequest = true;
+    private int questionsAsked = 0;
+    private int corrAnswers = 0;
+    private LinearLayout.LayoutParams p;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +45,10 @@ public class QuestionScene extends Activity {
         layout.setBackgroundColor(Color.WHITE);
         questions = new LinkedList<Question>();
         question = new TextView(getApplicationContext());
+        askedView = new TextView(getApplicationContext());
+        answeredView = new TextView(getApplicationContext());
+        p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        p.weight = 1;
         tts= new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int i) {
@@ -48,19 +59,29 @@ public class QuestionScene extends Activity {
         tts.setLanguage(Locale.US);
         question.setText("PLEASE WAIT...");
         layout.addView(question);
+
         for(int i = 0; i < answerButtons.length; i++){
             answerButtons[i] = new Button(getApplicationContext());
             layout.addView(answerButtons[i]);
             answerButtons[i].setOnClickListener(new AnswerHandler());
+            answerButtons[i].setWidth(0);
+            answerButtons[i].setLayoutParams(p);
         }
+        layout.setPadding(25, 25, 25, 25);
+        question.setLayoutParams(p);
+        askedView.setText(Integer.toString(questionsAsked));
+        answeredView.setText(Integer.toString(corrAnswers));
+        askedView.setTextSize(20);
+        answeredView.setTextSize(20);
+        answeredView.setTextColor(Color.GREEN);
+        layout.addView(askedView);
+        layout.addView(answeredView);
 
         if(!enoughQuestions()){
             new OTDBConnect().execute();
-            Toast.makeText(getApplicationContext(), "MADE CALL TO API. QUESTION SIZE IS " + questions.size(), Toast.LENGTH_SHORT).show();
         }
         else{
             setUpQuestion();
-            Toast.makeText(getApplicationContext(), "DID NOT MAKE CALL TO API. QUESTION SIZE IS " + questions.size(), Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -78,22 +99,29 @@ public class QuestionScene extends Activity {
     public class AnswerHandler implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            questions.remove();
-            if(!enoughQuestions()){
-                new OTDBConnect().execute();
-                Toast.makeText(getApplicationContext(), "MADE CALL TO API. QUESTION SIZE IS " + questions.size(), Toast.LENGTH_SHORT).show();
+            questionsAsked++;
+            if(questions.remove().checkCorrectAnswer(((Button)view).getText().toString())){
+                corrAnswers++;
+                answeredView.setText(Integer.toString(corrAnswers));
             }
+            askedView.setText(Integer.toString(questionsAsked));
+
+            if(!enoughQuestions()){
+                if(doneWithRequest) {
+                    doneWithRequest = false;
+                    new OTDBConnect().execute();
+                }
+                }
             else{
                 setUpQuestion();
-                Toast.makeText(getApplicationContext(), "DID NOT MAKE CALL TO API. QUESTION SIZE IS " + questions.size() , Toast.LENGTH_SHORT).show();
-            }
+               }
         }
     }
 
     public class OTDBConnect extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void... params) {
-            final String URL = "https://opentdb.com/api.php?amount=50";
+            final String URL = "https://opentdb.com/api.php?amount=50&type=multiple";
             Request request = new Request(Verb.GET, URL);
             Response resp = request.send();
             try {
@@ -117,14 +145,15 @@ public class QuestionScene extends Activity {
                     answers = new String[4];
                     JSONObject temp = jArray.getJSONObject(i);
                     question.setQuestion(temp.getString("question"));
-                    answers[0] = temp.getString("correct_answer");
+                    answers[0] = Parser.unescapeEntities(temp.getString("correct_answer"), true);
                     JSONArray wrongs = new JSONArray(temp.getString("incorrect_answers"));
                     for(int j = 0; j < wrongs.length(); j++){
-                        answers[j+1] = wrongs.getString(j);
+                        answers[j+1] = Parser.unescapeEntities(wrongs.getString(j), true);
                     }
                     question.setAnswers(answers);
                     questions.add(question);
                 }
+                doneWithRequest = true;
                 setUpQuestion();
             } catch (JSONException e) {
                 e.printStackTrace();
