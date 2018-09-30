@@ -25,7 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.backgroundColor = UIColor.white;
         
         // initialize this class
-        let mainViewController = MainViewController()
+        let mainViewController = MenuViewController()
         
         // set root view ctrl of apps window
         window!.rootViewController = mainViewController
