@@ -3,7 +3,15 @@ package com.masesk.traveltrivia;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,13 +22,23 @@ import org.scribe.model.Verb;
 
 public class Test extends Activity {
     TextView txt;
+    Button btn;
+    LinearLayout linearLayout;
+    ScrollView scroll;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
-        txt = (TextView)findViewById(R.id.textView);
-        txt.setText("PLEASE WAIT..");
+        //btn = (Button)findViewById(R.id.button);
+        linearLayout = (LinearLayout)findViewById(R.id.linearview);
+        scroll = (ScrollView)findViewById(R.id.scrollview);
         new OTDBConnect().execute();
+//        btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                new OTDBConnect().execute();
+//            }
+//        });
     }
 
     //skeleton for Open Trivia Database
@@ -42,19 +60,34 @@ public class Test extends Activity {
         }
         @Override
         protected void onPostExecute(String result) {
-            txt.setText("");
+            RadioGroup rdGroup;
+            RadioButton rd;
+            TextView tempText;
             StringBuilder builder = new StringBuilder();
             try {
                 JSONObject jObject = new JSONObject(result);
                 JSONArray jArray = jObject.getJSONArray("results");
                 for(int i = 0; i < jArray.length(); i++) {
                     JSONObject temp = jArray.getJSONObject(i) ;
-                    builder.append(temp.getString("question") + "\n\n");
+                    tempText = new TextView(getApplicationContext());
+                    tempText.setText(temp.getString("question"));
+                    linearLayout.addView(tempText);
+                    rdGroup = new RadioGroup(getApplicationContext());
+                    linearLayout.addView(rdGroup);
+                    rd = new RadioButton(getApplicationContext());
+                    rd.setText(temp.getString("correct_answer"));
+                    rdGroup.addView(rd);
+                    JSONArray wrongs = new JSONArray(temp.getString("incorrect_answers"));
+                    for(int j = 0; j < wrongs.length(); j++){
+                        rd = new RadioButton(getApplicationContext());
+                        rd.setText(wrongs.get(j).toString());
+                        rdGroup.addView(rd);
+                    }
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            txt.setText(builder.toString());
         }
     }
 }
