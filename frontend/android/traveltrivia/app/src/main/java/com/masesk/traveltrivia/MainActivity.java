@@ -46,7 +46,6 @@ public class MainActivity extends Activity implements
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
-
         // Prepare the data for UI
         captions = new HashMap<>();
         captions.put(A, R.string.kws_caption);
