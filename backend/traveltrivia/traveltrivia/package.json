@@ -1,0 +1,12 @@
+{
+  "name": "traveltrivia",
+  "version": "0.0.0",
+  "description": "traveltrivia",
+  "main": "app.js",
+  "author": {
+    "name": ""
+  },
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
