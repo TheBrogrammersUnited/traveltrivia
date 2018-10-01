@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,11 +72,16 @@ public class QuestionScene extends Activity implements RecognitionListener {
         tts= new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int i) {
-
+                if (i == TextToSpeech.SUCCESS) {
+                    int result = tts.setLanguage(Locale.getDefault());
+                    setUpQuestion();
+                }
+                else if (i == TextToSpeech.ERROR) {
+                    Toast.makeText(getApplicationContext(), "Error occurred while initializing Text-To-Speech engine", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
-        tts.setLanguage(Locale.US);
         question.setText("PLEASE WAIT...");
         layout.addView(question);
 
@@ -109,9 +115,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
 
         if(!enoughQuestions()){
             new OTDBConnect().execute();
-        }
-        else{
-            setUpQuestion();
         }
 
     }
@@ -235,8 +238,9 @@ public class QuestionScene extends Activity implements RecognitionListener {
                 stopListening = false;
                 setUpQuestion();
 
+
             }
-        }, 2000);
+        }, 4000);
     }
 
     /************************************************************************************
