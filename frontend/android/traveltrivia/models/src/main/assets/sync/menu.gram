@@ -2,4 +2,4 @@
 
 grammar menu;
 
-public <item> = ay | bee | see;
+public <item> = ay | bee | see | dee;
