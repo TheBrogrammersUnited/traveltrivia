@@ -53,7 +53,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
     private int questionsAsked = 0;
     private int corrAnswers = 0;
     private LinearLayout.LayoutParams p;
-    private Button skipNext;
     private Button changedButton;
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
     private boolean stopListening = false;
@@ -67,7 +66,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
         question = new TextView(getApplicationContext());
         askedView = new TextView(getApplicationContext());
         answeredView = new TextView(getApplicationContext());
-        skipNext = new Button(getApplicationContext());
         p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         p.weight = 1;
         tts= new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
@@ -92,7 +90,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
             answerButtons[i].setBackgroundColor(Color.LTGRAY);
             answerButtons[i].setLayoutParams(p);
         }
-        layout.addView(skipNext);
         layout.setPadding(25, 25, 25, 25);
         question.setLayoutParams(p);
         askedView.setText(Integer.toString(questionsAsked));
@@ -135,7 +132,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
         public void onClick(View view) {
             tts.stop();
             setButtonsEnabled(false);
-            skipNext.setEnabled(true);
             questionsAsked++;
             if(questions.peek().checkCorrectAnswer(((Button)view).getText().toString())){
                 tts.speak("Correct", TextToSpeech.QUEUE_ADD, null);
@@ -235,7 +231,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
             public void run() {
                 setButtonsEnabled(true);
                 changedButton.setBackgroundColor(Color.LTGRAY);
-                skipNext.setEnabled(false);
                 recognizer.startListening("listen");
                 stopListening = false;
                 while(tts.isSpeaking()){
@@ -380,7 +375,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
 
     public void setAnswerUsingVR(int buttonIndex){
         setButtonsEnabled(false);
-        skipNext.setEnabled(true);
         questionsAsked++;
         if(questions.peek().checkCorrectAnswer(answerButtons[buttonIndex].getText().toString())){
             tts.speak("Correct", TextToSpeech.QUEUE_ADD, null);
