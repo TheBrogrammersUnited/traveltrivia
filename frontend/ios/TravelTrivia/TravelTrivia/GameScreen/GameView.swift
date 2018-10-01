@@ -24,13 +24,26 @@ class GameView: UIView {
             return view
     }()
     
+    lazy var correctnessLabel: UILabel! =
+        {
+            let view = UILabel()
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.text = "Correct"
+            view.textAlignment = .center
+            view.numberOfLines = 4
+            view.textColor = UIColor.green
+            view.font = view.font.withSize(30)
+            view.alpha = 0
+            return view
+    }()
+    
     lazy var buttonA: UIButton! =
         {
             let index = 0
             let view = UIButton()
             view.translatesAutoresizingMaskIntoConstraints = false
             //view.addTarget(self, action: "buttonPressed", for: .touchDown)
-            view.setTitle("Choice A", for: .normal)
+            view.setTitle("Choice A is loading...", for: .normal)
             view.backgroundColor = UIColor.blue
             return view
     }()
@@ -40,7 +53,7 @@ class GameView: UIView {
             let view = UIButton()
             view.translatesAutoresizingMaskIntoConstraints = false
             //view.addTarget(self, action: "buttonPressed", for: .touchDown)
-            view.setTitle("Choice B", for: .normal)
+            view.setTitle("Choice B is loading...", for: .normal)
             view.backgroundColor = UIColor.blue
             return view
     }()
@@ -50,7 +63,7 @@ class GameView: UIView {
             let view = UIButton()
             view.translatesAutoresizingMaskIntoConstraints = false
             //view.addTarget(self, action: "buttonPressed", for: .touchDown)
-            view.setTitle("Choice C", for: .normal)
+            view.setTitle("Choice C is loading...", for: .normal)
             view.backgroundColor = UIColor.blue
             return view
     }()
@@ -60,7 +73,7 @@ class GameView: UIView {
             let view = UIButton()
             view.translatesAutoresizingMaskIntoConstraints = false
             //view.addTarget(self, action: "buttonPressed", for: .touchDown)
-            view.setTitle("Choice D", for: .normal)
+            view.setTitle("Choice D is loading...", for: .normal)
             view.backgroundColor = UIColor.blue
             return view
     }()
@@ -72,11 +85,13 @@ class GameView: UIView {
         
         super.init(frame: frame)
         
+        self.addSubview(correctnessLabel)
         self.addSubview(promptLabel)
         self.addSubview(buttonA)
         self.addSubview(buttonB)
         self.addSubview(buttonC)
         self.addSubview(buttonD)
+        
         self.setNeedsUpdateConstraints()
         UIViewController.removeSpinner()
     }
@@ -96,6 +111,7 @@ class GameView: UIView {
         buttonCConstraints()
         buttonDConstraints()
         promptLabelConstraints()
+        correctLabelConstraints()
         
         super.updateConstraints()
     }
@@ -271,6 +287,41 @@ class GameView: UIView {
             toItem: self,
             attribute: .bottom,
             multiplier: 0.3,
+            constant: 0.0)
+            .isActive = true
+    }
+    
+    func correctLabelConstraints() {
+        // Center button in Page View
+        NSLayoutConstraint(
+            item: correctnessLabel,
+            attribute: .centerX,
+            relatedBy: .equal,
+            toItem: self,
+            attribute: .centerX,
+            multiplier: 1.0,
+            constant: 0.0)
+            .isActive = true
+        
+        // Set Width to be 80% of the Page View Width
+        NSLayoutConstraint(
+            item: correctnessLabel,
+            attribute: .width,
+            relatedBy: .equal,
+            toItem: self,
+            attribute: .width,
+            multiplier: 0.8,
+            constant: 0.0)
+            .isActive = true
+        
+        // Set Y Position Relative to Bottom of Page View
+        NSLayoutConstraint(
+            item: correctnessLabel,
+            attribute: .bottom,
+            relatedBy: .equal,
+            toItem: self,
+            attribute: .bottom,
+            multiplier: 0.5,
             constant: 0.0)
             .isActive = true
     }

@@ -15,7 +15,11 @@ private let characterEntities : [ Substring : Character ] = [
     "&apos;"    : "'",
     "&lt;"      : "<",
     "&gt;"      : ">",
-    
+    "&eacute;"  : "é",
+    "&iacute;"  : "í",
+    "&oacute;"  : "ó",
+    "&ldquo;"   : "“",
+    "&ldquor;"  : "„",
     // HTML character entity references:
     "&nbsp;"    : "\u{00a0}",
     // ...
