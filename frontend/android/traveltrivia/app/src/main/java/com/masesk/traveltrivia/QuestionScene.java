@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -232,6 +231,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
                 setButtonsEnabled(true);
                 changedButton.setBackgroundColor(Color.LTGRAY);
                 recognizer.startListening("listen");
+
                 stopListening = false;
                 while(tts.isSpeaking()){
 
@@ -243,7 +243,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
     }
 
     /************************************************************************************
-     *
      *
      *              SPEECH RECOGNITION IMPLEMENTATION
      *
@@ -331,6 +330,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
             handleOptionUsingVR(text);
             recognizer.stop();
             if(!stopListening) {
+                ttsSpeak("listening");
                 recognizer.startListening("options");
             }
         }
