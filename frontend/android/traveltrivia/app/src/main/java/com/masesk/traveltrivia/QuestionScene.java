@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
@@ -231,11 +232,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
                 setButtonsEnabled(true);
                 changedButton.setBackgroundColor(Color.LTGRAY);
                 recognizer.startListening("listen");
-
                 stopListening = false;
-                while(tts.isSpeaking()){
-
-                }
                 setUpQuestion();
 
             }
@@ -247,6 +244,31 @@ public class QuestionScene extends Activity implements RecognitionListener {
      *              SPEECH RECOGNITION IMPLEMENTATION
      *
      ************************************************************************************/
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions, @NonNull  int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSIONS_REQUEST_RECORD_AUDIO) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Recognizer initialization is a time-consuming and it involves IO,
+                // so we execute it in async task
+                new SetupTask(this).execute();
+            } else {
+                finish();
+            }
+        }
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (recognizer != null) {
+            recognizer.cancel();
+            recognizer.shutdown();
+        }
+    }
 
     private class SetupTask extends AsyncTask<Void, Void, Exception> {
         WeakReference<QuestionScene> activityReference;
