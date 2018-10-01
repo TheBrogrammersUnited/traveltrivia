@@ -9,8 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,17 +34,19 @@ public class QuestionScene extends Activity {
     private int questionsAsked = 0;
     private int corrAnswers = 0;
     private LinearLayout.LayoutParams p;
-
+    private Button skipNext;
+    private Button changedButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question_scene);
-        layout = (LinearLayout)findViewById(R.id.layout);
+        layout = (LinearLayout)findViewById(R.id.layout); //find main layout from activity_question_scene.xml
         layout.setBackgroundColor(Color.WHITE);
         questions = new LinkedList<Question>();
         question = new TextView(getApplicationContext());
         askedView = new TextView(getApplicationContext());
         answeredView = new TextView(getApplicationContext());
+        skipNext = new Button(getApplicationContext());
         p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         p.weight = 1;
         tts= new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
@@ -61,12 +61,19 @@ public class QuestionScene extends Activity {
         layout.addView(question);
 
         for(int i = 0; i < answerButtons.length; i++){
+            p.setMargins(25, 25, 25, 25);
             answerButtons[i] = new Button(getApplicationContext());
             layout.addView(answerButtons[i]);
             answerButtons[i].setOnClickListener(new AnswerHandler());
             answerButtons[i].setWidth(0);
+            answerButtons[i].setTextSize(20);
+            answerButtons[i].setLayoutParams(p);
+            answerButtons[i].setBackgroundColor(Color.LTGRAY);
             answerButtons[i].setLayoutParams(p);
         }
+        skipNext.setText("Next");
+        skipNext.setEnabled(false);
+        layout.addView(skipNext);
         layout.setPadding(25, 25, 25, 25);
         question.setLayoutParams(p);
         askedView.setText(Integer.toString(questionsAsked));
@@ -76,6 +83,15 @@ public class QuestionScene extends Activity {
         answeredView.setTextColor(Color.GREEN);
         layout.addView(askedView);
         layout.addView(answeredView);
+        skipNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setButtonsEnabled(true);
+                changedButton.setBackgroundColor(Color.LTGRAY);
+                skipNext.setEnabled(false);
+                setUpQuestion();
+            }
+        });
 
         if(!enoughQuestions()){
             new OTDBConnect().execute();
@@ -99,22 +115,35 @@ public class QuestionScene extends Activity {
     public class AnswerHandler implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            tts.stop();
+            setButtonsEnabled(false);
+            skipNext.setEnabled(true);
             questionsAsked++;
-            if(questions.remove().checkCorrectAnswer(((Button)view).getText().toString())){
+            if(questions.peek().checkCorrectAnswer(((Button)view).getText().toString())){
+                tts.speak("Correct", TextToSpeech.QUEUE_ADD, null);
                 corrAnswers++;
                 answeredView.setText(Integer.toString(corrAnswers));
+                view.setBackgroundColor(Color.GREEN);
             }
+            else{
+                tts.speak("Incorrect...correct answer is " + questions.peek().getCorrectAnswer(), TextToSpeech.QUEUE_ADD, null);
+                view.setBackgroundColor(Color.RED);
+            }
+            questions.remove();
             askedView.setText(Integer.toString(questionsAsked));
-
+            changedButton = (Button)view;
             if(!enoughQuestions()){
                 if(doneWithRequest) {
                     doneWithRequest = false;
                     new OTDBConnect().execute();
                 }
-                }
-            else{
-                setUpQuestion();
-               }
+            }
+        }
+    }
+
+    public void setButtonsEnabled(boolean st){
+        for(int i = 0; i < answerButtons.length; i++){
+            answerButtons[i].setEnabled(st);
         }
     }
 

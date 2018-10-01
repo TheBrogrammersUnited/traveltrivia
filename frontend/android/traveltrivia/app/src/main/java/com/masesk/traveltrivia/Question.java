@@ -1,12 +1,8 @@
 package com.masesk.traveltrivia;
 import org.jsoup.parser.Parser;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class Question {
     private String question;
@@ -38,6 +34,10 @@ public class Question {
         this.answers = answers;
         correctAnswer = answers[0];
         shuffle();
+    }
+
+    public String getCorrectAnswer(){
+        return correctAnswer;
     }
 
     public void shuffle(){

@@ -3,16 +3,12 @@ package com.masesk.traveltrivia;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,8 +17,6 @@ import org.scribe.model.Response;
 import org.scribe.model.Verb;
 
 public class Test extends Activity {
-    TextView txt;
-    Button btn;
     LinearLayout linearLayout;
     ScrollView scroll;
     @Override
