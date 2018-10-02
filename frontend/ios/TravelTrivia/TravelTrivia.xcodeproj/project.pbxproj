@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9D00E833216313E9009CFC75 /* OpenTriviaDbInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D00E832216313E9009CFC75 /* OpenTriviaDbInterface.swift */; };
 		9D205FC02160B5DE00520884 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D205FBF2160B5DE00520884 /* MenuView.swift */; };
 		9D205FC42160BEB500520884 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D205FC32160BEB500520884 /* GameViewController.swift */; };
 		9D205FC62160BEC700520884 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D205FC52160BEC700520884 /* GameView.swift */; };
@@ -40,6 +41,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9D00E832216313E9009CFC75 /* OpenTriviaDbInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenTriviaDbInterface.swift; sourceTree = "<group>"; };
 		9D205FBF2160B5DE00520884 /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		9D205FC32160BEB500520884 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		9D205FC52160BEC700520884 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 				9D205FCC2160D9F600520884 /* Payloads */,
 				9D205FC32160BEB500520884 /* GameViewController.swift */,
 				9D205FC52160BEC700520884 /* GameView.swift */,
+				9D00E832216313E9009CFC75 /* OpenTriviaDbInterface.swift */,
 			);
 			path = GameScreen;
 			sourceTree = "<group>";
@@ -317,6 +320,7 @@
 				9D205FC02160B5DE00520884 /* MenuView.swift in Sources */,
 				9D26DAE32160381000DA7251 /* AppDelegate.swift in Sources */,
 				9D205FD02160F5E700520884 /* StringHtmlExtension.swift in Sources */,
+				9D00E833216313E9009CFC75 /* OpenTriviaDbInterface.swift in Sources */,
 				9D205FC62160BEC700520884 /* GameView.swift in Sources */,
 				9D205FCE2160DA0800520884 /* QuestionPayload.swift in Sources */,
 				9D205FD221618FED00520884 /* TextToSpeech.swift in Sources */,

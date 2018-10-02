@@ -21,10 +21,13 @@ class GameViewController: UIViewController {
     
     let synth = Speaker()
     
-    let lettersArr :[String] = ["A","B","C","D"]
+    let lettersArr :[String] = ["A.","B.","C.","D."]
     
     let todoEndpoint: String = "https://opentdb.com/api.php?amount=50&type=multiple"
     
+    var doneSpeakingDelegate: ((Bool?)->Void)? = nil
+    
+    var otdb : OpenTriviaDbInterface? = nil
     
     
     override func viewDidLoad() {
@@ -32,17 +35,28 @@ class GameViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         view = GameView()
+        otdb = OpenTriviaDbInterface()
         gameView = view as! GameView
         synth.setController(c: self)
         
         print("test")
         UIViewController.displaySpinner(onView: view.self)
-        makeGetCall()
+        waitingHTTP = true
+        otdb!.makeGetCall(apiRequest: todoEndpoint, onComplete: onCompleteGetTrivia)
+    }
+    
+    func onCompleteGetTrivia()
+    {
+        waitingHTTP = false
+        let qArr = otdb!.getQuestions()
+        questions.append(contentsOf:qArr)
+        getNextQuestion()
     }
     
     public func finishedSpeakingUtterance()
     {
         print("Done from GameViewCotrl")
+        doneSpeakingDelegate?(nil)
     }
     
     
@@ -55,6 +69,7 @@ class GameViewController: UIViewController {
         }
         let questionStr = self.questions[0].question.stringByDecodingHTMLEntities
         
+        self.doneSpeakingDelegate = nil
         self.synth.speakStr(string: questionStr)
         
         var answers: [String] = []
@@ -66,6 +81,7 @@ class GameViewController: UIViewController {
             if i != randomIndex{
                 let answer = self.lettersArr[i] + " - " + self.questions[0].incorrect_answers[j].stringByDecodingHTMLEntities
                 answers.append(answer)
+                self.doneSpeakingDelegate = nil
                 self.synth.speakStr(string: answer)
                 buttons[i]?.setTitle(answer, for: .normal)
                 j += 1
@@ -76,6 +92,7 @@ class GameViewController: UIViewController {
             else{
                 let answer = self.lettersArr[i] + " - " + self.questions[0].correct_answer.stringByDecodingHTMLEntities
                 answers.append(answer)
+                self.doneSpeakingDelegate = nil
                 self.synth.speakStr(string: answer)
                 buttons[i]?.setTitle(answer, for: .normal)
                 buttons[i]!.removeTarget(nil, action: nil, for: .allEvents)
@@ -91,7 +108,7 @@ class GameViewController: UIViewController {
         {
             if !waitingHTTP
             {
-                makeGetCall()
+                otdb!.makeGetCall(apiRequest: todoEndpoint, onComplete: onCompleteGetTrivia)
             }
         }
     }
@@ -107,23 +124,36 @@ class GameViewController: UIViewController {
         {
             questionFail = true
         }
-        
-        fadeAllAwayAnim { (nil) in
-            self.fadeInCorrectnessLabel(isCorrect: false, onComplete: { (nil) in
+        self.synth.synth.stopSpeaking(at: AVSpeechBoundary.immediate)
+        fadeAllAwayAnim
+        {
+            (nil) in
+            self.fadeInCorrectnessLabel(isCorrect: false, onComplete:
+            {
+                (nil) in
                 
                 print("wrong")
-                self.synth.speakStr(string: self.gameView.correctnessLabel.text!)
-                if questionFail
-                {
-                    self.tries = 0
-                    self.getNextQuestion()
-                }
                 
-                self.fadeOutCorrectnessLabel(onComplete: { (nil) in
-                    self.fadeAllInAnim(onComplete: { (nil) in
-                        
+                self.synth.speakStr(string: self.gameView.correctnessLabel.text!)
+                
+                self.doneSpeakingDelegate =
+                {
+                    (nil) in
+                    self.fadeOutCorrectnessLabel(onComplete:
+                    {
+                        (nil) in
+                        if questionFail
+                        {
+                            self.tries = 0
+                            self.getNextQuestion()
+                        }
+                        self.fadeAllInAnim(onComplete:
+                        {
+                            (nil) in
+                            
+                        })
                     })
-                })
+                }
             })
         }
     }
@@ -131,19 +161,31 @@ class GameViewController: UIViewController {
     
     func rightAnswerPressed()
     {
-        fadeAllAwayAnim { (nil) in
-            self.fadeInCorrectnessLabel(isCorrect: true, onComplete: { (nil) in
-                
+        self.synth.synth.stopSpeaking(at: AVSpeechBoundary.immediate)
+        fadeAllAwayAnim
+        {
+            (nil) in
+            self.fadeInCorrectnessLabel(isCorrect: true, onComplete:
+            {
+                (nil) in
                 print("right")
-                self.synth.speakStr(string: self.gameView.correctnessLabel.text!)
-                self.tries = 0
-                self.getNextQuestion()
                 
-                self.fadeOutCorrectnessLabel(onComplete: { (nil) in
-                    self.fadeAllInAnim(onComplete: { (nil) in
-                        
+                self.synth.speakStr(string: self.gameView.correctnessLabel.text!)
+                
+                self.doneSpeakingDelegate =
+                {
+                    (nil) in
+                    self.tries = 0
+                    self.fadeOutCorrectnessLabel(onComplete:
+                    {
+                        (nil) in
+                        self.getNextQuestion()
+                        self.fadeAllInAnim(onComplete:
+                        {
+                            (nil) in
+                        })
                     })
-                })
+                }
             })
         }
     }
@@ -173,7 +215,7 @@ class GameViewController: UIViewController {
     
     func fadeOutCorrectnessLabel(onComplete:@escaping ((Bool?)->Void))
     {
-        UIView.animate(withDuration: 0.5, delay: 1.5, options: UIViewAnimationOptions.curveEaseOut, animations:
+        UIView.animate(withDuration: 0.5, delay: 0.5, options: UIViewAnimationOptions.curveEaseOut, animations:
         {
                 self.gameView.correctnessLabel.alpha = 0
         }, completion: onComplete)
@@ -181,7 +223,7 @@ class GameViewController: UIViewController {
     
     func fadeAllAwayAnim(onComplete:@escaping ((Bool?)->Void))
     {
-        UIView.animate(withDuration: 1.0, delay: 0.0, options: UIViewAnimationOptions.curveEaseOut, animations:
+        UIView.animate(withDuration: 0.5, delay: 0.0, options: UIViewAnimationOptions.curveEaseOut, animations:
             {
                 self.gameView.promptLabel.alpha = 0
                 self.gameView.buttonA.alpha = 0
@@ -203,73 +245,6 @@ class GameViewController: UIViewController {
         }, completion: onComplete)
     }
     
-    func makeGetCall() {
-        waitingHTTP = true
-        
-        // Set up the URL request
-        guard let url = URL(string: todoEndpoint) else {
-            print("Error: cannot create URL")
-            return
-        }
-        let urlRequest = URLRequest(url: url)
-        
-        // set up the session
-        let config = URLSessionConfiguration.default
-        let session = URLSession(configuration: config)
-        
-        // make the request
-        let task = session.dataTask(with: urlRequest) {
-            (data, response, error) in
-            self.waitingHTTP = false
-            // check for any errors
-            guard error == nil else {
-                print("error calling GET on \(self.todoEndpoint)")
-                print(error!)
-                return
-            }
-            // make sure we got data
-            guard let responseData = data else {
-                print("Error: did not receive data")
-                return
-            }
-            // parse the result as JSON, since that's what the API provides
-            do {
-                
-                // This part only prints the results as a string
-                guard let todo = try JSONSerialization.jsonObject(with: responseData, options: [])
-                    as? [String: Any] else {
-                        print("error trying to convert data to JSON")
-                        return
-                }
-                print("The todo is: " + todo.description)
-                
-                // this part turns the results into data objects we can use
-                guard let results = try? JSONDecoder().decode(Results.self, from: responseData) else {
-                    print("Error: Couldn't decode data into Results")
-                    return
-                }
-                
-                print("answers:")
-                for r in results.results{
-                    self.questions.append(r)
-                    
-                }
-                
-                // todo (seanfcastillo) : so this is a problem. the data gets loaded, but the UI won't update fast. idk how to fix it
-                DispatchQueue.main.async
-                {
-                    self.getNextQuestion()
-                }
-                
-            } catch  {
-                print("error trying to convert data to JSON")
-                return
-            }
-        }
-        task.resume()
-    }
-    
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
