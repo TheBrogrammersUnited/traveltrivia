@@ -1,0 +1,163 @@
+[33mcommit 307f9eed0b74893bc3792375fe5dba4239589034[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Mon Oct 1 16:16:48 2018 -0700
+
+    It reads the first question now
+
+[33mcommit c9a576e80e01f2fad8ff1b6fe232b71537d06368[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Mon Oct 1 15:46:45 2018 -0700
+
+    second attempt at fixing the recognizer
+
+[33mcommit e144f067bf73054220ab291264f9b765ad7b35b1[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Mon Oct 1 15:30:38 2018 -0700
+
+    Fixed bug with recognizer
+
+[33mcommit 2d69631af991e52b06c07fb9e5225dbe70f240d5[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Mon Oct 1 15:05:19 2018 -0700
+
+    Remove the next button
+
+[33mcommit 805d7708a6d6e4dfa208c5d4341feb07fc601b4b[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Mon Oct 1 15:04:51 2018 -0700
+
+    Added voice recognition for Android
+
+[33mcommit 5de0b625ee186985f811d4ef9d21e8d6c230b6b7[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Mon Oct 1 12:54:13 2018 -0700
+
+    Added Nodejs backend skeleton
+
+[33mcommit 096319873018f67cec9b1c409581ca1d658f477b[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Mon Oct 1 12:51:25 2018 -0700
+
+    Added git ignore for Visual Studio
+
+[33mcommit 0cfe09075eca935d7823303c24d771c901bd0232[m
+Merge: eecb44c 5ef92a9
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Mon Oct 1 12:32:41 2018 -0700
+
+    Merge branch 'master' of https://github.com/TheBrogrammersUnited/traveltrivia
+
+[33mcommit eecb44ccc3c35ebf41b57aad0cf541248fd6c52c[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Mon Oct 1 12:32:26 2018 -0700
+
+    Added next button after answering a question
+
+[33mcommit 5ef92a9ad4b5b3e041ae3cf976bf0f5e846d25c1[m
+Author: seanymac <>
+Date:   Sun Sep 30 17:37:01 2018 -0700
+
+    iOS - Added transition effects. Added text-to-speech
+
+[33mcommit 2ffcbc970ba94c20a14e2eaecd605b884d735106[m
+Author: seanymac <>
+Date:   Sun Sep 30 05:30:39 2018 -0700
+
+    iOS - First working prototype of open trivia API questions. No text-to-speech or voice rec yet though
+
+[33mcommit e53e19a4d45a5e22d4fecf8e6509cb3c7b3c8cba[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Sun Sep 30 01:05:02 2018 -0700
+
+    Improved UI. Make buttons bigger and spacing larger
+
+[33mcommit f51d26880271153b39308b3a1773a4ab57cf0e53[m
+Author: seanymac <>
+Date:   Sun Sep 30 00:12:56 2018 -0700
+
+    Added iOS frontend hello world
+
+[33mcommit 3a7f0cc29f948ccd6d47a38277ad2c07729d5bce[m
+Merge: f7f8668 459db03
+Author: seanymac <>
+Date:   Sun Sep 30 00:09:46 2018 -0700
+
+    Merge branch 'master' of https://github.com/TheBrogrammersUnited/traveltrivia
+
+[33mcommit f7f8668bb2b89e725df0a80fba29e6e9f5e0c2b4[m
+Author: seanymac <>
+Date:   Sun Sep 30 00:06:51 2018 -0700
+
+    Added iOS frontend hello world
+
+[33mcommit 459db032d1eed8b3267bc1f23b8d202c93603cdd[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Sun Sep 30 00:04:06 2018 -0700
+
+    Added Jsoup to escape HTML entity
+
+[33mcommit 53122260df7f38b370970d2829621063132959f7[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Sat Sep 29 22:57:26 2018 -0700
+
+    Added text to speech
+
+[33mcommit 15f6556ae5617b1991525b7f8169812074ed6717[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Sat Sep 29 22:31:26 2018 -0700
+
+    Added question caching from opentdb. Fixed question screen layout
+
+[33mcommit 3755db2d9a6044f16e3271f7b512fcd3eec0ca70[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Sat Sep 29 21:16:07 2018 -0700
+
+    Implemeted the query for question from opentdb and parsed it successfully into lists
+
+[33mcommit d95341a7d743d9fc9e50f39f5af274151e023ebc[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Sat Sep 29 18:12:56 2018 -0700
+
+    Added JSON formatter
+
+[33mcommit 232a34b4d20350ca811403c65e6b294dce4ae9d2[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Sat Sep 29 17:50:46 2018 -0700
+
+    Added call to OTDB in Test Activity. Please use this activity for testing purposes
+
+[33mcommit 9f503c051741a2dfc34672622707068d48840bae[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Sat Sep 29 15:25:03 2018 -0700
+
+    Removed unncessary grammers.
+
+[33mcommit b2614aeb94ef69562bdfbfd1c7a987dfa2ad474b[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Sat Sep 29 15:00:39 2018 -0700
+
+    Added Android version with Speech recognition skeleton
+
+[33mcommit bcecd8222664dcc449d5ae9466e924eadab41b30[m
+Author: radon 5k <maseskrikorian@gmail.com>
+Date:   Sat Sep 29 14:19:05 2018 -0700
+
+    Added gitignore
+
+[33mcommit c6a324ab39d11a30da79dbe0a858bb9e4da41f55[m
+Author: masesk <maseskrikorian@gmail.com>
+Date:   Fri Sep 14 18:46:44 2018 -0700
+
+    Removed extra equal sign from index.html
+
+[33mcommit fd2c4e279ddf65a1134c185be716ffbac3cab669[m
+Author: masesk <maseskrikorian@gmail.com>
+Date:   Fri Sep 14 17:47:21 2018 -0700
+
+    Setup folder for backend, frontend. Created a web version login template.
+
+[33mcommit 55b5906af9e3c5ea3efca3e52e6e604b0e94954b[m
+Author: masesk <36123825+masesk@users.noreply.github.com>
+Date:   Fri Sep 14 13:24:06 2018 -0700
+
+    Initial commit
