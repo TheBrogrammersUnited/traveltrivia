@@ -43,6 +43,11 @@ class GameViewController: UIViewController {
         UIViewController.displaySpinner(onView: view.self)
         waitingHTTP = true
         otdb!.makeGetCall(apiRequest: todoEndpoint, onComplete: onCompleteGetTrivia)
+        
+        var voiceRec = VoiceRecognitionController()
+        voiceRec.Init()
+        voiceRec.StartListening()
+    
     }
     
     func onCompleteGetTrivia()
@@ -108,6 +113,7 @@ class GameViewController: UIViewController {
         {
             if !waitingHTTP
             {
+                waitingHTTP = true
                 otdb!.makeGetCall(apiRequest: todoEndpoint, onComplete: onCompleteGetTrivia)
             }
         }

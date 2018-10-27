@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		9D00E833216313E9009CFC75 /* OpenTriviaDbInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D00E832216313E9009CFC75 /* OpenTriviaDbInterface.swift */; };
+		9D0CA775217AF1AC0083A4D0 /* AcousticModelEnglish.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9D0CA772217AF1AB0083A4D0 /* AcousticModelEnglish.bundle */; };
+		9D0CA776217AF1AC0083A4D0 /* OpenEars.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D0CA773217AF1AB0083A4D0 /* OpenEars.framework */; };
+		9D0CA777217AF1AC0083A4D0 /* Slt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D0CA774217AF1AB0083A4D0 /* Slt.framework */; };
+		9D0CA77A217AF2700083A4D0 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D0CA779217AF2700083A4D0 /* AudioToolbox.framework */; };
+		9D0CA77C217AF2780083A4D0 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D0CA77B217AF2780083A4D0 /* AVFoundation.framework */; };
+		9D0CA77F2182E4470083A4D0 /* VoiceRecognitionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0CA77E2182E4470083A4D0 /* VoiceRecognitionController.swift */; };
 		9D205FC02160B5DE00520884 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D205FBF2160B5DE00520884 /* MenuView.swift */; };
 		9D205FC42160BEB500520884 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D205FC32160BEB500520884 /* GameViewController.swift */; };
 		9D205FC62160BEC700520884 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D205FC52160BEC700520884 /* GameView.swift */; };
@@ -42,6 +48,13 @@
 
 /* Begin PBXFileReference section */
 		9D00E832216313E9009CFC75 /* OpenTriviaDbInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenTriviaDbInterface.swift; sourceTree = "<group>"; };
+		9D0CA772217AF1AB0083A4D0 /* AcousticModelEnglish.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = AcousticModelEnglish.bundle; sourceTree = "<group>"; };
+		9D0CA773217AF1AB0083A4D0 /* OpenEars.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = OpenEars.framework; sourceTree = "<group>"; };
+		9D0CA774217AF1AB0083A4D0 /* Slt.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Slt.framework; sourceTree = "<group>"; };
+		9D0CA779217AF2700083A4D0 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		9D0CA77B217AF2780083A4D0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		9D0CA77D217AF2B70083A4D0 /* OpenEarsHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenEarsHeader.h; sourceTree = "<group>"; };
+		9D0CA77E2182E4470083A4D0 /* VoiceRecognitionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecognitionController.swift; sourceTree = "<group>"; };
 		9D205FBF2160B5DE00520884 /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		9D205FC32160BEB500520884 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		9D205FC52160BEC700520884 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
@@ -68,6 +81,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D0CA77C217AF2780083A4D0 /* AVFoundation.framework in Frameworks */,
+				9D0CA77A217AF2700083A4D0 /* AudioToolbox.framework in Frameworks */,
+				9D0CA777217AF1AC0083A4D0 /* Slt.framework in Frameworks */,
+				9D0CA776217AF1AC0083A4D0 /* OpenEars.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,6 +105,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9D0CA771217AF1AB0083A4D0 /* Framework */ = {
+			isa = PBXGroup;
+			children = (
+				9D0CA772217AF1AB0083A4D0 /* AcousticModelEnglish.bundle */,
+				9D0CA773217AF1AB0083A4D0 /* OpenEars.framework */,
+				9D0CA774217AF1AB0083A4D0 /* Slt.framework */,
+			);
+			path = Framework;
+			sourceTree = "<group>";
+		};
+		9D0CA778217AF26F0083A4D0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9D0CA77B217AF2780083A4D0 /* AVFoundation.framework */,
+				9D0CA779217AF2700083A4D0 /* AudioToolbox.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		9D205FC72160BEE500520884 /* MainMenu */ = {
 			isa = PBXGroup;
 			children = (
@@ -104,6 +140,7 @@
 				9D205FC32160BEB500520884 /* GameViewController.swift */,
 				9D205FC52160BEC700520884 /* GameView.swift */,
 				9D00E832216313E9009CFC75 /* OpenTriviaDbInterface.swift */,
+				9D0CA77E2182E4470083A4D0 /* VoiceRecognitionController.swift */,
 			);
 			path = GameScreen;
 			sourceTree = "<group>";
@@ -129,10 +166,12 @@
 		9D26DAD62160380F00DA7251 = {
 			isa = PBXGroup;
 			children = (
+				9D0CA771217AF1AB0083A4D0 /* Framework */,
 				9D26DAE12160381000DA7251 /* TravelTrivia */,
 				9D26DAF62160381000DA7251 /* TravelTriviaTests */,
 				9D26DB012160381000DA7251 /* TravelTriviaUITests */,
 				9D26DAE02160381000DA7251 /* Products */,
+				9D0CA778217AF26F0083A4D0 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -156,6 +195,7 @@
 				9D26DAE92160381000DA7251 /* Assets.xcassets */,
 				9D26DAEB2160381000DA7251 /* LaunchScreen.storyboard */,
 				9D26DAEE2160381000DA7251 /* Info.plist */,
+				9D0CA77D217AF2B70083A4D0 /* OpenEarsHeader.h */,
 			);
 			path = TravelTrivia;
 			sourceTree = "<group>";
@@ -288,6 +328,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D0CA775217AF1AC0083A4D0 /* AcousticModelEnglish.bundle in Resources */,
 				9D26DAED2160381000DA7251 /* LaunchScreen.storyboard in Resources */,
 				9D26DAEA2160381000DA7251 /* Assets.xcassets in Resources */,
 			);
@@ -324,6 +365,7 @@
 				9D205FC62160BEC700520884 /* GameView.swift in Sources */,
 				9D205FCE2160DA0800520884 /* QuestionPayload.swift in Sources */,
 				9D205FD221618FED00520884 /* TextToSpeech.swift in Sources */,
+				9D0CA77F2182E4470083A4D0 /* VoiceRecognitionController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,11 +509,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = UE9VY6DZ36;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Framework",
+				);
 				INFOPLIST_FILE = TravelTrivia/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = TheBrogrammers.TravelTrivia;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "/Users/seanymac/Desktop/traveltrivia-project/traveltrivia/frontend/ios/TravelTrivia/TravelTrivia/OpenEarsHeader.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -480,11 +528,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = UE9VY6DZ36;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Framework",
+				);
 				INFOPLIST_FILE = TravelTrivia/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = TheBrogrammers.TravelTrivia;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "/Users/seanymac/Desktop/traveltrivia-project/traveltrivia/frontend/ios/TravelTrivia/TravelTrivia/OpenEarsHeader.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

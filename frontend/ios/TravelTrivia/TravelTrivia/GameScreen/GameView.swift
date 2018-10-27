@@ -9,10 +9,11 @@
 import UIKit
 import CoreGraphics
 
-class GameView: UIView {
+class GameView: UIView
+{
     var shouldSetupConstraints = true
     
-    let btnWidthPercent: CGFloat = 0.5
+    let btnWidthPercent: CGFloat = 0.8
     
     lazy var promptLabel: UILabel! =
         {
