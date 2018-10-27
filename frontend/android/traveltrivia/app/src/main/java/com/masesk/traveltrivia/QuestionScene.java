@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -62,13 +64,34 @@ public class QuestionScene extends Activity implements RecognitionListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question_scene);
         layout = (LinearLayout)findViewById(R.id.layout); //find main layout from activity_question_scene.xml
-        layout.setBackgroundColor(Color.WHITE);
+        layout.setBackgroundResource(R.drawable.background);
         questions = new LinkedList<Question>();
         question = new TextView(getApplicationContext());
         askedView = new TextView(getApplicationContext());
         answeredView = new TextView(getApplicationContext());
+
+
+        question.setBackgroundResource(R.drawable.question);
+        question.setGravity(Gravity.CENTER);
+        question.setPadding(25, 25, 25, 25);
+        question.setTextColor(Color.BLACK);
         p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         p.weight = 1;
+        LinearLayout scoreContainer = new LinearLayout(getApplicationContext());
+        scoreContainer.setOrientation(LinearLayout.HORIZONTAL);
+        scoreContainer.setLayoutParams(p);
+        askedView.setLayoutParams(p);
+        answeredView.setLayoutParams(p);
+        askedView.setGravity(Gravity.CENTER);
+        answeredView.setGravity(Gravity.CENTER);
+        scoreContainer.addView(askedView);
+        scoreContainer.addView(answeredView);
+        askedView.setBackgroundResource(R.drawable.button_incorrect);
+        askedView.setTextColor(Color.WHITE);
+        answeredView.setTextColor(Color.WHITE);
+        askedView.setTextSize(30);
+        answeredView.setTextSize(30);
+        answeredView.setBackgroundResource(R.drawable.button_correct);
         tts= new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int i) {
@@ -93,18 +116,14 @@ public class QuestionScene extends Activity implements RecognitionListener {
             answerButtons[i].setWidth(0);
             answerButtons[i].setTextSize(20);
             answerButtons[i].setLayoutParams(p);
-            answerButtons[i].setBackgroundColor(Color.LTGRAY);
+            answerButtons[i].setBackgroundResource(R.drawable.button);
             answerButtons[i].setLayoutParams(p);
         }
         layout.setPadding(25, 25, 25, 25);
         question.setLayoutParams(p);
         askedView.setText(Integer.toString(questionsAsked));
         answeredView.setText(Integer.toString(corrAnswers));
-        askedView.setTextSize(20);
-        answeredView.setTextSize(20);
-        answeredView.setTextColor(Color.GREEN);
-        layout.addView(askedView);
-        layout.addView(answeredView);
+        layout.addView(scoreContainer);
         int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
@@ -140,11 +159,11 @@ public class QuestionScene extends Activity implements RecognitionListener {
                 tts.speak("Correct", TextToSpeech.QUEUE_ADD, null);
                 corrAnswers++;
                 answeredView.setText(Integer.toString(corrAnswers));
-                view.setBackgroundColor(Color.GREEN);
+                view.setBackgroundResource(R.drawable.button_correct);
             }
             else{
                 tts.speak("Incorrect...correct answer is " + questions.peek().getCorrectAnswer(), TextToSpeech.QUEUE_ADD, null);
-                view.setBackgroundColor(Color.RED);
+                view.setBackgroundResource(R.drawable.button_incorrect);
             }
             questions.remove();
             askedView.setText(Integer.toString(questionsAsked));
@@ -213,7 +232,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
     public void setUpQuestion(){
         tts.stop();
         question.setText(questions.peek().getQuestion());
-        question.setTextSize(20);
+        question.setTextSize(25);
         tts.speak(questions.peek().getQuestion(), TextToSpeech.QUEUE_ADD, null);
 
         for(int i = 0; i < questions.peek().getAnswers().length; i++){
@@ -233,7 +252,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
         handler.postDelayed(new Runnable() {
             public void run() {
                 setButtonsEnabled(true);
-                changedButton.setBackgroundColor(Color.LTGRAY);
+                changedButton.setBackgroundResource(R.drawable.button);
                 recognizer.startListening("listen");
                 stopListening = false;
                 setUpQuestion();
@@ -406,11 +425,11 @@ public class QuestionScene extends Activity implements RecognitionListener {
             tts.speak("Correct", TextToSpeech.QUEUE_ADD, null);
             corrAnswers++;
             answeredView.setText(Integer.toString(corrAnswers));
-            answerButtons[buttonIndex].setBackgroundColor(Color.GREEN);
+            answerButtons[buttonIndex].setBackgroundResource(R.drawable.button_correct);
         }
         else{
             tts.speak("Incorrect...correct answer is " + questions.peek().getCorrectAnswer(), TextToSpeech.QUEUE_ADD, null);
-            answerButtons[buttonIndex].setBackgroundColor(Color.RED);
+            answerButtons[buttonIndex].setBackgroundResource(R.drawable.button_incorrect);
         }
         questions.remove();
         askedView.setText(Integer.toString(questionsAsked));
