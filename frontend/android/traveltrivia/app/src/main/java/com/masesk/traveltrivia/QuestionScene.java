@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
@@ -152,21 +153,20 @@ public class QuestionScene extends Activity implements RecognitionListener {
     public class AnswerHandler implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            tts.stop();
             setButtonsEnabled(false);
-            questionsAsked++;
             if(questions.peek().checkCorrectAnswer(((Button)view).getText().toString())){
-                tts.speak("Correct", TextToSpeech.QUEUE_ADD, null);
+                ttsSpeak("Correct", TextToSpeech.QUEUE_FLUSH);
                 corrAnswers++;
                 answeredView.setText(Integer.toString(corrAnswers));
                 view.setBackgroundResource(R.drawable.button_correct);
             }
             else{
-                tts.speak("Incorrect...correct answer is " + questions.peek().getCorrectAnswer(), TextToSpeech.QUEUE_ADD, null);
+                questionsAsked++;
+                askedView.setText(Integer.toString(questionsAsked));
+                ttsSpeak("Incorrect...correct answer is " + questions.peek().getCorrectAnswer(), TextToSpeech.QUEUE_FLUSH);
                 view.setBackgroundResource(R.drawable.button_incorrect);
             }
             questions.remove();
-            askedView.setText(Integer.toString(questionsAsked));
             changedButton = (Button)view;
             if(!enoughQuestions()){
                 if(doneWithRequest) {
@@ -230,14 +230,13 @@ public class QuestionScene extends Activity implements RecognitionListener {
     }
 
     public void setUpQuestion(){
-        tts.stop();
         question.setText(questions.peek().getQuestion());
         question.setTextSize(25);
-        tts.speak(questions.peek().getQuestion(), TextToSpeech.QUEUE_ADD, null);
+        ttsSpeak(questions.peek().getQuestion(), TextToSpeech.QUEUE_ADD);
 
         for(int i = 0; i < questions.peek().getAnswers().length; i++){
-            tts.speak(answerList[i], TextToSpeech.QUEUE_ADD, null);
-            tts.speak(questions.peek().getAnswers()[i], TextToSpeech.QUEUE_ADD, null);
+            ttsSpeak(answerList[i], TextToSpeech.QUEUE_ADD);
+            ttsSpeak(questions.peek().getAnswers()[i], TextToSpeech.QUEUE_ADD);
            answerButtons[i].setText(questions.peek().getAnswers()[i]);
         }
     }
@@ -375,7 +374,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
             handleOptionUsingVR(text);
             recognizer.stop();
             if(!stopListening) {
-                ttsSpeak("listening");
+                ttsSpeak("listening", TextToSpeech.QUEUE_FLUSH);
                 recognizer.startListening("options");
             }
         }
@@ -396,19 +395,19 @@ public class QuestionScene extends Activity implements RecognitionListener {
                 stopListening = true;
                 switch (option){
                     case "ay":
-                        ttsSpeak("You selected " + answerList[0]);
+                        ttsSpeak("You selected " + answerList[0], TextToSpeech.QUEUE_FLUSH);
                         setAnswerUsingVR(0);
                         break;
                     case "bee":
-                        ttsSpeak("You selected " + answerList[1]);
+                        ttsSpeak("You selected " + answerList[1], TextToSpeech.QUEUE_FLUSH);
                         setAnswerUsingVR(1);
                         break;
                     case "see":
-                        ttsSpeak("You selected " + answerList[2]);
+                        ttsSpeak("You selected " + answerList[2], TextToSpeech.QUEUE_FLUSH);
                         setAnswerUsingVR(2);
                         break;
                     case "dee":
-                        ttsSpeak("You selected " + answerList[3]);
+                        ttsSpeak("You selected " + answerList[3], TextToSpeech.QUEUE_FLUSH);
                         setAnswerUsingVR(3);
                         break;
                 }
@@ -420,19 +419,19 @@ public class QuestionScene extends Activity implements RecognitionListener {
 
     public void setAnswerUsingVR(int buttonIndex){
         setButtonsEnabled(false);
-        questionsAsked++;
         if(questions.peek().checkCorrectAnswer(answerButtons[buttonIndex].getText().toString())){
-            tts.speak("Correct", TextToSpeech.QUEUE_ADD, null);
+            ttsSpeak("Correct", TextToSpeech.QUEUE_FLUSH);
             corrAnswers++;
             answeredView.setText(Integer.toString(corrAnswers));
             answerButtons[buttonIndex].setBackgroundResource(R.drawable.button_correct);
         }
         else{
-            tts.speak("Incorrect...correct answer is " + questions.peek().getCorrectAnswer(), TextToSpeech.QUEUE_ADD, null);
+            questionsAsked++;
+            askedView.setText(Integer.toString(questionsAsked));
+            ttsSpeak("Incorrect...correct answer is " + questions.peek().getCorrectAnswer(), TextToSpeech.QUEUE_FLUSH);
             answerButtons[buttonIndex].setBackgroundResource(R.drawable.button_incorrect);
         }
         questions.remove();
-        askedView.setText(Integer.toString(questionsAsked));
         changedButton = answerButtons[buttonIndex];
         if(!enoughQuestions()){
             if(doneWithRequest) {
@@ -443,9 +442,14 @@ public class QuestionScene extends Activity implements RecognitionListener {
         waitAfterCorrect();
     }
 
-    public void ttsSpeak(String input){
-        tts.stop();
-        tts.speak(input, TextToSpeech.QUEUE_ADD, null);
+    public void ttsSpeak(String input, int speakType){
+        //speakType speaks only that word is TextToSpeeh.QUEUE_FLUSH
+        //and Stacks them if TextToSpeech.QUEUE_ADD
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            tts.speak(input,speakType,null,null);
+        } else {
+            tts.speak(input, speakType, null);
+        }
     }
 
 

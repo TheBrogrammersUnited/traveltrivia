@@ -8,6 +8,8 @@ public class Question {
     private String question;
     private String[] answers;
     private String correctAnswer;
+    private int correctIndex = 0;
+    private int answerIndex;
 
     public Question(){
 
@@ -34,6 +36,12 @@ public class Question {
         this.answers = answers;
         correctAnswer = answers[0];
         shuffle();
+        for(int i = 0; i < answers.length; i++){
+            if (answers.equals(correctAnswer)) {
+                correctIndex = i;
+                break;
+            }
+        }
     }
 
     public String getCorrectAnswer(){
@@ -52,5 +60,9 @@ public class Question {
         else{
             return false;
         }
+    }
+
+    public int getCorrectIndex(){
+        return correctIndex;
     }
 }

@@ -10,6 +10,10 @@
         android:allowBackup="false"
         android:icon="@drawable/icon"
         android:label="@string/app_name">
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
         <activity
             android:name=".Test"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
@@ -19,13 +23,22 @@
             android:name=".QuestionScene"
             android:theme="@android:style/Theme.Black.NoTitleBar">
             >
+        </activity>
+        <activity android:name=".Error" />
+        <activity
+            android:name=".MainActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar">
+            >
+
+        </activity>
+        <activity android:name=".LoginActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Error"></activity>
     </application>
 
 </manifest>
