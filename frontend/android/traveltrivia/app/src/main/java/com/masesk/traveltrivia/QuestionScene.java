@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,7 +19,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -163,7 +161,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
             else{
                 questionsAsked++;
                 askedView.setText(Integer.toString(questionsAsked));
-                ttsSpeak("Incorrect...correct answer is " + questions.peek().getCorrectAnswer(), TextToSpeech.QUEUE_FLUSH);
+                ttsSpeak("Incorrect. Correct answer is " + answerList[questions.peek().getCorrectIndex()] + ". " + questions.peek().getCorrectAnswer(), TextToSpeech.QUEUE_FLUSH);
                 view.setBackgroundResource(R.drawable.button_incorrect);
             }
             questions.remove();
@@ -428,7 +426,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
         else{
             questionsAsked++;
             askedView.setText(Integer.toString(questionsAsked));
-            ttsSpeak("Incorrect...correct answer is " + questions.peek().getCorrectAnswer(), TextToSpeech.QUEUE_FLUSH);
+            ttsSpeak("Incorrect. Correct answer is " + answerList[questions.peek().getCorrectIndex()] + ". " + questions.peek().getCorrectAnswer(), TextToSpeech.QUEUE_FLUSH);
             answerButtons[buttonIndex].setBackgroundResource(R.drawable.button_incorrect);
         }
         questions.remove();
