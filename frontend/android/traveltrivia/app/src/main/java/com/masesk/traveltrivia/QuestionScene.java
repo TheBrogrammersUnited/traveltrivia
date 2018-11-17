@@ -198,6 +198,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
         }
         @Override
         protected void onPostExecute(String result) {
+            super.onPostExecute(result);
             Question question;
             String[] answers;
             try {
