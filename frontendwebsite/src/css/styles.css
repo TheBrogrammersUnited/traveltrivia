@@ -1,0 +1,25 @@
+body{
+	margin:0;
+	background:green;
+}
+header{
+	background:#03a9f4;
+	text-align: center
+}
+.logo{
+	color: #fff;
+	font-size:40px;
+	font-family:'Times New Roman';
+}
+header input{
+	font-size: 20px;
+	margin:20px 0;
+}
+.news_item{
+	background: red;
+}
+.meban{
+	font-size: 200px;
+	background: red;
+}
+
