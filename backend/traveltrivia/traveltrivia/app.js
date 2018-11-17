@@ -1,11 +1,11 @@
 var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/mydb";
+var url = "mongodb://127.0.0.1:27017/mydb";
 const express = require('express')
 const bodyParser = require('body-parser');
 const app = express();
 const port = 9000;
 
-app.use(bodyParser.urlencoded({ extended : true }));
+//app.use(bodyParser.urlencoded({ extended : true }));
 app.use(bodyParser.json());
 //app.use(bodyParser.raw());
 //app.use(bodyParser.text());
@@ -44,7 +44,7 @@ app.post('/add-user', function (req, res) {
     MongoClient.connect(url, { useNewUrlParser: true } , function (err, db) {
         var dbo = db.db("mydb");
         console.log(req.body);
-        var myobj = { _id: req.body._id, name: req.body.name, correct: 0, total: 0 };
+        var myobj = { _id: ObjectId(req.body._id), name: req.body.name, correct: 0, total: 0 };
         res.send(myobj);
         dbo.collection("users").insertOne(myobj, function (err, result) {
             db.close();
@@ -94,7 +94,7 @@ app.get('/find-user/:id', function (req, res) {
         var id = req.params.id;
         dbo.collection("users").findOne({ _id: id }, function (err, result) {
             if (result != null) {
-                response = result._id;
+                response = result;
             }
             res.send(response);
             db.close();
