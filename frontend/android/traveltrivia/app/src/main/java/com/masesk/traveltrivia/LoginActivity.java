@@ -2,21 +2,18 @@ package com.masesk.traveltrivia;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.Profile;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.scribe.model.Request;
@@ -29,7 +26,6 @@ public class LoginActivity extends Activity {
     private LinearLayout layout;
     private LoginButton loginButton;
     private CallbackManager callbackManager;
-    private TextView tx;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +73,56 @@ public class LoginActivity extends Activity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            try {
+                JSONObject jsonArray = new JSONObject(s);
+                if(jsonArray.getString("_id").equals("-1")){
+                    new createUser().execute();
+                }
+                else{
+                    MainActivity.setInfo(jsonArray.getString("_id"), jsonArray.getString("name"), jsonArray.getString("correct"), jsonArray.getString("total"));
+                    MainActivity.setReady();
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+
+    public class createUser extends AsyncTask<Void, Void, String>{
+        @Override
+        protected String doInBackground(Void... voids) {
+
+            final String URL = "http://10.0.2.2:9000/add-user/";
+            Request request = new Request(Verb.POST, URL);
+            StringBuilder payLoad = new StringBuilder();
+            payLoad.append("{ \"id\" : \"");
+            payLoad.append(AccessToken.getCurrentAccessToken().getUserId());
+            payLoad.append("\" , \"name\" : \" ");
+            payLoad.append(Profile.getCurrentProfile().getFirstName());
+            payLoad.append("\" }");
+            request.addHeader("Content-Type", "application/json;charset=UTF-8");
+            request.addPayload(payLoad.toString());
+           // request.addBodyParameter("id", AccessToken.getCurrentAccessToken().getApplicationId());
+            //request.addBodyParameter("name", Profile.getCurrentProfile().getFirstName());
+            Response resp = request.send();
+            return resp.getBody();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+            try{
+                JSONObject jsonArray = new JSONObject(s);
+                MainActivity.setInfo(jsonArray.getString("_id"), jsonArray.getString("name"), "0","0" );
+                MainActivity.setReady();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
     }
     public void goMainScreen(){
