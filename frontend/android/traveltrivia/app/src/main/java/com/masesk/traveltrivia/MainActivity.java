@@ -7,15 +7,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.Profile;
 import com.facebook.login.LoginManager;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -23,13 +20,17 @@ public class MainActivity extends Activity  {
     private LinearLayout mainLayout;
     private Button startPlaying;
     private Button logout;
-    private TextView welcome;
     private TextView usernameField;
     private TextView winLossScore;
     private static String name = "";
     private static String total = "";
     private static String correct = "";
     private static String id = "";
+    private LinearLayout topMain;
+    private LinearLayout loadingLayout;
+    private ProgressBar progressBar;
+    private Button logoutFb;
+    private TextView update;
     private static LoginReady loginReady = new LoginReady();
     @Override
     public void onCreate(Bundle state) {
@@ -37,23 +38,27 @@ public class MainActivity extends Activity  {
         setContentView(R.layout.main);
         mainLayout = (LinearLayout)findViewById(R.id.MainLayout);
         mainLayout.setVisibility(View.INVISIBLE);
+        topMain = (LinearLayout)findViewById(R.id.topMain);
+        loadingLayout = (LinearLayout)findViewById(R.id.loadingLayout);
+        logoutFb = (Button)findViewById(R.id.logoutFb);
+        progressBar = (ProgressBar)findViewById(R.id.progressBar);
         loginReady.setListener(new LoginReady.ChangeListener() {
             @Override
             public void onChange() {
+                topMain.removeView(loadingLayout);
                 mainLayout.setVisibility(View.VISIBLE);
-                mainLayout.setBackgroundColor(Color.WHITE);
+                mainLayout.setBackgroundResource(R.drawable.background);
                 startPlaying = new Button(getApplicationContext());
                 logout = new Button(getApplicationContext());
-                welcome = new TextView(getApplicationContext());
                 winLossScore = (TextView)findViewById(R.id.score);
                 usernameField = (TextView)findViewById(R.id.username);
                 startPlaying.setText("Start Playing");
-                startPlaying.setBackgroundResource(R.drawable.background);
-                logout.setBackgroundResource(R.drawable.background);
+                startPlaying.setBackgroundResource(R.drawable.button);
+                logout.setBackgroundResource(R.drawable.button);
                 mainLayout.addView(startPlaying);
                 mainLayout.addView(logout);
-                mainLayout.addView(welcome);
                 logout.setText("Logout");
+
                 AccessToken accessToken = AccessToken.getCurrentAccessToken();
                 boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
 
@@ -72,6 +77,9 @@ public class MainActivity extends Activity  {
                     request.setParameters(parameters);
                     request.executeAsync();
                 }
+                else{
+                    logout();
+                }
                 startPlaying.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -84,17 +92,21 @@ public class MainActivity extends Activity  {
                 logout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        LoginManager.getInstance().logOut();
-                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        logout();
                     }
                 });
+
             }
         });
         if(loginReady.isReady()){
             loginReady.setReady(true);
         }
+        logoutFb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logout();
+            }
+        });
 
 
     }
@@ -109,6 +121,23 @@ public class MainActivity extends Activity  {
 
     public static void setReady(){
         loginReady.setReady(true);
+    }
+
+    public void logout(){
+        LoginManager.getInstance().logOut();
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    public static String getName(){
+        return name;
+    }
+    public static String getTotal(){
+        return total;
+    }
+    public static String getCorrect(){
+        return correct;
     }
 
 }

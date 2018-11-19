@@ -24,6 +24,8 @@ public class TopBar extends Fragment {
         username = (TextView)rootView.findViewById(R.id.username);
         score = (TextView)rootView.findViewById(R.id.score);
         coins = (TextView)rootView.findViewById(R.id.coins);
+        username.setText(MainActivity.getName());
+        score.setText(MainActivity.getCorrect() + "/" + MainActivity.getTotal());
         // Inflate the layout for this fragment
         return rootView;
     }

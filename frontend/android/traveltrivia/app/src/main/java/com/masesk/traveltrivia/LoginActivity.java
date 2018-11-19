@@ -46,6 +46,7 @@ public class LoginActivity extends Activity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 loginButton.setVisibility(View.INVISIBLE);
+                new checkLogin().execute();
                 goMainScreen();
             }
 
