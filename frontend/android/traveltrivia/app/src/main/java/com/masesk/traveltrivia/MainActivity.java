@@ -2,7 +2,6 @@ package com.masesk.traveltrivia;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -30,7 +29,6 @@ public class MainActivity extends Activity  {
     private LinearLayout loadingLayout;
     private ProgressBar progressBar;
     private Button logoutFb;
-    private TextView update;
     private static LoginReady loginReady = new LoginReady();
     @Override
     public void onCreate(Bundle state) {
@@ -42,21 +40,21 @@ public class MainActivity extends Activity  {
         loadingLayout = (LinearLayout)findViewById(R.id.loadingLayout);
         logoutFb = (Button)findViewById(R.id.logoutFb);
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
+        startPlaying = new Button(getApplicationContext());
+        logout = new Button(getApplicationContext());
+        mainLayout.addView(startPlaying);
+        mainLayout.addView(logout);
         loginReady.setListener(new LoginReady.ChangeListener() {
             @Override
             public void onChange() {
                 topMain.removeView(loadingLayout);
                 mainLayout.setVisibility(View.VISIBLE);
                 mainLayout.setBackgroundResource(R.drawable.background);
-                startPlaying = new Button(getApplicationContext());
-                logout = new Button(getApplicationContext());
                 winLossScore = (TextView)findViewById(R.id.score);
                 usernameField = (TextView)findViewById(R.id.username);
                 startPlaying.setText("Start Playing");
                 startPlaying.setBackgroundResource(R.drawable.button);
                 logout.setBackgroundResource(R.drawable.button);
-                mainLayout.addView(startPlaying);
-                mainLayout.addView(logout);
                 logout.setText("Logout");
 
                 AccessToken accessToken = AccessToken.getCurrentAccessToken();
@@ -92,6 +90,7 @@ public class MainActivity extends Activity  {
                 logout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        loginReady.setReady(false);
                         logout();
                     }
                 });
@@ -139,5 +138,12 @@ public class MainActivity extends Activity  {
     public static String getCorrect(){
         return correct;
     }
+
+    public static void setScore(String correct, String total){
+        MainActivity.correct = correct;
+        MainActivity.total = total;
+    }
+
+
 
 }

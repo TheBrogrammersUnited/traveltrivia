@@ -29,4 +29,9 @@ public class TopBar extends Fragment {
         // Inflate the layout for this fragment
         return rootView;
     }
+
+    public void setInfo(String correct, String total){
+        score.setText(correct + "/" + total);
+        MainActivity.setScore(correct, total);
+    }
 }

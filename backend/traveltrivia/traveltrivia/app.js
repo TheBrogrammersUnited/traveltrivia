@@ -103,10 +103,24 @@ app.post('/update-correct', function (req, res) {
 
     MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         var dbo = db.db("mydb");
-        console.log(req.body);
         var query = { _id: req.body.id };
         var myobj = {
             $set: { correct: req.body.correct }
+        };
+        dbo.collection("users").updateOne(query, myobj, function (err, result) {
+            res.send("OK");
+            db.close();
+        });
+    });
+});
+
+app.post('/update-correct-total', function (req, res) {
+
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
+        var dbo = db.db("mydb");
+        var query = { _id: req.body.id };
+        var myobj = {
+            $set: { correct: req.body.correct, total: req.body.total },
         };
         dbo.collection("users").updateOne(query, myobj, function (err, result) {
             res.send("OK");

@@ -2,6 +2,9 @@ package com.masesk.traveltrivia;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -19,6 +22,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.facebook.AccessToken;
+import com.facebook.Profile;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,10 +61,12 @@ public class QuestionScene extends Activity implements RecognitionListener {
     private boolean doneWithRequest = true;
     private int questionsAsked = 0;
     private int corrAnswers = 0;
+    private Button exit;
     private LinearLayout.LayoutParams p;
     private Button changedButton;
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
     private boolean stopListening = false;
+    private TopBar topbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,8 +77,10 @@ public class QuestionScene extends Activity implements RecognitionListener {
         question = new TextView(getApplicationContext());
         askedView = new TextView(getApplicationContext());
         answeredView = new TextView(getApplicationContext());
-
-
+        questionsAsked = Integer.parseInt(MainActivity.getTotal().trim());
+        corrAnswers = Integer.parseInt(MainActivity.getCorrect().trim());
+        exit = new Button(getApplicationContext());
+        topbar = (TopBar) getFragmentManager().findFragmentById(R.id.fragment);
         question.setBackgroundResource(R.drawable.question);
         question.setGravity(Gravity.CENTER);
         question.setPadding(25, 25, 25, 25);
@@ -90,6 +101,9 @@ public class QuestionScene extends Activity implements RecognitionListener {
         answeredView.setTextColor(Color.WHITE);
         askedView.setTextSize(30);
         answeredView.setTextSize(30);
+        exit.setTextSize(30);
+        exit.setText("STOP PLAYING");
+        exit.setBackgroundResource(R.drawable.button);
         answeredView.setBackgroundResource(R.drawable.button_correct);
         tts= new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
@@ -123,6 +137,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
         askedView.setText(Integer.toString(questionsAsked));
         answeredView.setText(Integer.toString(corrAnswers));
         layout.addView(scoreContainer);
+        layout.addView(exit);
         int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
@@ -134,6 +149,38 @@ public class QuestionScene extends Activity implements RecognitionListener {
         if(!enoughQuestions()){
             new OTDBConnect().execute();
         }
+
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new updateInfo().execute();
+                AlertDialog.Builder builder = new AlertDialog.Builder(QuestionScene.this);
+                builder.setTitle("Confirm");
+                builder.setMessage("Are you sure you want to exit the game?");
+                builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        tts.shutdown();
+                        startActivity(intent);
+
+                    }
+
+
+                });
+
+                builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
 
     }
 
@@ -155,12 +202,14 @@ public class QuestionScene extends Activity implements RecognitionListener {
             if(questions.peek().checkCorrectAnswer(((Button)view).getText().toString())){
                 ttsSpeak("Correct", TextToSpeech.QUEUE_FLUSH);
                 corrAnswers++;
+                topbar.setInfo(Integer.toString(corrAnswers), Integer.toString(questionsAsked));
                 answeredView.setText(Integer.toString(corrAnswers));
                 view.setBackgroundResource(R.drawable.button_correct);
             }
             else{
                 questionsAsked++;
                 askedView.setText(Integer.toString(questionsAsked));
+                topbar.setInfo(Integer.toString(corrAnswers), Integer.toString(questionsAsked));
                 ttsSpeak("Incorrect. Correct answer is " + answerList[questions.peek().getCorrectIndex()] + ". " + questions.peek().getCorrectAnswer(), TextToSpeech.QUEUE_FLUSH);
                 view.setBackgroundResource(R.drawable.button_incorrect);
             }
@@ -181,6 +230,8 @@ public class QuestionScene extends Activity implements RecognitionListener {
             answerButtons[i].setEnabled(st);
         }
     }
+
+
 
     public class OTDBConnect extends AsyncTask<Void, Void, String> {
         @Override
@@ -226,6 +277,33 @@ public class QuestionScene extends Activity implements RecognitionListener {
         }
 
 
+    }
+
+    public class updateInfo extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... params) {
+            final String URL = "http://10.0.2.2:9000/update-correct-total/";
+            Request request = new Request(Verb.POST, URL);
+            StringBuilder payLoad = new StringBuilder();
+            payLoad.append("{ \"id\" : \"");
+            payLoad.append(AccessToken.getCurrentAccessToken().getUserId());
+            payLoad.append("\" , \"total\" : \" ");
+            payLoad.append(questionsAsked);
+            payLoad.append(" \", \"correct\" : \" ");
+            payLoad.append(corrAnswers);
+            payLoad.append("\" }");
+            request.addHeader("Content-Type", "application/json;charset=UTF-8");
+            request.addPayload(payLoad.toString());
+            // request.addBodyParameter("id", AccessToken.getCurrentAccessToken().getApplicationId());
+            //request.addBodyParameter("name", Profile.getCurrentProfile().getFirstName());
+            Response resp = request.send();
+            return resp.getBody();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+        }
     }
 
     public void setUpQuestion(){
@@ -422,11 +500,13 @@ public class QuestionScene extends Activity implements RecognitionListener {
             ttsSpeak("Correct", TextToSpeech.QUEUE_FLUSH);
             corrAnswers++;
             answeredView.setText(Integer.toString(corrAnswers));
+            topbar.setInfo(Integer.toString(corrAnswers), Integer.toString(questionsAsked));
             answerButtons[buttonIndex].setBackgroundResource(R.drawable.button_correct);
         }
         else{
             questionsAsked++;
             askedView.setText(Integer.toString(questionsAsked));
+            topbar.setInfo(Integer.toString(corrAnswers), Integer.toString(questionsAsked));
             ttsSpeak("Incorrect. Correct answer is " + answerList[questions.peek().getCorrectIndex()] + ". " + questions.peek().getCorrectAnswer(), TextToSpeech.QUEUE_FLUSH);
             answerButtons[buttonIndex].setBackgroundResource(R.drawable.button_incorrect);
         }
