@@ -4,12 +4,12 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const app = express();
 const port = 9000;
+var d = new Date();
 
 app.use(bodyParser.json());
 
 
 MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
-    if (err) throw err;
     var dbo = db.db("mydb");
     dbo.createCollection("customers", function (err, result) {
         db.close();
@@ -17,19 +17,27 @@ MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
 });
 
 app.get('/', function (req, res) {
-    var d = new Date();
-    console.log("We got time connection");
+    console.log("\n--------START OF CONNECTION--------\n");
+    console.log("TIME :", d.toISOString());
+    console.log("TYPE :", "GET");
+    console.log("URL :", req.url);
     resText = "Server time is " + d.toISOString();
     res.send(resText);
+    console.log("RESP :", resText);
+    console.log("\n--------END OF CONNECTION--------\n\n");
 });
 
 app.get('/get-all-users', function (req, res) {
     MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
-        if (err) throw err;
+        console.log("\n--------START OF CONNECTION--------\n");
+        console.log("TIME :", d.toISOString());
+        console.log("TYPE :", "GET");
+        console.log("URL :", req.url);
         var dbo = db.db("mydb");
         dbo.collection("users").find({}).toArray(function (err, result) {
-            console.log(result);
             res.send(result);
+            console.log("RESP :", result);
+            console.log("\n--------END OF CONNECTION--------\n\n");
             db.close();
         });
     });
@@ -39,13 +47,17 @@ app.get('/get-all-users', function (req, res) {
 app.post('/add-user', function (req, res) {
     
     MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
-        console.log("request to add user recieved..");
+        console.log("\n--------START OF CONNECTION--------\n");
+        console.log("TIME :", d.toISOString());
+        console.log("TYPE :", "POST");
+        console.log("URL :", req.url);
         var dbo = db.db("mydb");
-        console.log(req.body);
         var myobj = { _id: req.body.id, name: req.body.name, correct: 0, total: 0 };
         res.send(myobj);
+        console.log("RESP :", myobj);
         dbo.collection("users").insertOne(myobj, function (err, result) {
             db.close();
+            console.log("\n--------END OF CONNECTION--------\n\n");
         });
     });
 });
@@ -53,15 +65,20 @@ app.post('/add-user', function (req, res) {
 app.post('/update-total', function (req, res) {
 
     MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
+        console.log("\n--------START OF CONNECTION--------\n");
+        console.log("TIME :", d.toISOString());
+        console.log("TYPE :", "POST");
+        console.log("URL :", req.url);
         var dbo = db.db("mydb");
         var query = { _id: req.body.id };
-        console.log(req.body.total);
         var myobj = {
 
             $set: { total: req.body.total }
         };
         dbo.collection("users").updateOne(query, myobj, function (err, result) {
             res.send(result);
+            console.log("RESP :", query, myobj);
+            console.log("\n--------END OF CONNECTION--------\n\n");
             db.close();
         });
     });
@@ -69,7 +86,10 @@ app.post('/update-total', function (req, res) {
 
 app.get('/get-total/:id', function (req, res) {
     MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
-        if (err) throw err;
+        console.log("\n--------START OF CONNECTION--------\n");
+        console.log("TIME :", d.toISOString());
+        console.log("TYPE :", "GET");
+        console.log("URL :", req.url);
         var response = JSON.stringify({ total: -1 });
         var dbo = db.db("mydb");
         var id = req.params.id;
@@ -77,6 +97,8 @@ app.get('/get-total/:id', function (req, res) {
             if (result != null) {
                 response = JSON.stringify({ total: result.total });
             }
+            console.log("RESP :", response);
+            console.log("\n--------END OF CONNECTION--------\n\n");
             res.send(response);
             db.close();
         });
@@ -85,7 +107,10 @@ app.get('/get-total/:id', function (req, res) {
 
 app.get('/get-correct/:id', function (req, res) {
     MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
-        if (err) throw err;
+        console.log("\n--------START OF CONNECTION--------\n");
+        console.log("TIME :", d.toISOString());
+        console.log("TYPE :", "GET");
+        console.log("URL :", req.url);
         var response = JSON.stringify({ correct: -1});
         var dbo = db.db("mydb");
         var id = req.params.id;
@@ -93,7 +118,9 @@ app.get('/get-correct/:id', function (req, res) {
             if (result != null) {
                 response = JSON.stringify({ correct: result.correct});
             }
+            console.log("RESP :", response);
             res.send(response);
+            console.log("\n--------END OF CONNECTION--------\n\n");
             db.close();
         });
     });
@@ -102,13 +129,19 @@ app.get('/get-correct/:id', function (req, res) {
 app.post('/update-correct', function (req, res) {
 
     MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
+        console.log("\n--------START OF CONNECTION--------\n");
+        console.log("TIME :", d.toISOString());
+        console.log("TYPE :", "POST");
+        console.log("URL :", req.url);
         var dbo = db.db("mydb");
         var query = { _id: req.body.id };
         var myobj = {
             $set: { correct: req.body.correct }
         };
+        console.log("RESP :", query, myobj);
         dbo.collection("users").updateOne(query, myobj, function (err, result) {
             res.send("OK");
+            console.log("\n--------END OF CONNECTION--------\n\n");
             db.close();
         });
     });
@@ -117,6 +150,10 @@ app.post('/update-correct', function (req, res) {
 app.post('/update-correct-total', function (req, res) {
 
     MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
+        console.log("\n--------START OF CONNECTION--------\n");
+        console.log("TIME :", d.toISOString());
+        console.log("TYPE :", "POST");
+        console.log("URL :", req.url);
         var dbo = db.db("mydb");
         var query = { _id: req.body.id };
         var myobj = {
@@ -124,6 +161,8 @@ app.post('/update-correct-total', function (req, res) {
         };
         dbo.collection("users").updateOne(query, myobj, function (err, result) {
             res.send("OK");
+            console.log("RESP :", query, myobj);
+            console.log("\n--------END OF CONNECTION--------\n\n");
             db.close();
         });
     });
@@ -134,7 +173,10 @@ app.get('/find-user/:id', function (req, res) {
     console.log("request to find user recieved..");
     console.log(req.url);
     MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
-        if (err) throw err;
+        console.log("\n--------START OF CONNECTION--------\n");
+        console.log("TIME :", d.toISOString());
+        console.log("TYPE :", "GET");
+        console.log("URL :", req.url);
         var response = JSON.stringify({ _id: -1 });
         var dbo = db.db("mydb");
         var id = req.params.id;
@@ -143,6 +185,8 @@ app.get('/find-user/:id', function (req, res) {
                 response = result;
             }
             res.send(response);
+            console.log("RESP :", response);
+            console.log("\n--------END OF CONNECTION--------\n\n");
             db.close();
         });
     });
