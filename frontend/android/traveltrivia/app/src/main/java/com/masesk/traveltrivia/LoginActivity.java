@@ -26,6 +26,8 @@ public class LoginActivity extends Activity {
     private LinearLayout layout;
     private LoginButton loginButton;
     private CallbackManager callbackManager;
+    private final String awsURL = "http://ec2-18-188-247-247.us-east-2.compute.amazonaws.com";
+    private final String awsPORT = ":9000";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +67,7 @@ public class LoginActivity extends Activity {
     public class checkLogin extends AsyncTask<Void, Void, String>{
         @Override
         protected String doInBackground(Void... voids) {
-            final String URL = "http://10.0.2.2:9000/find-user/" + AccessToken.getCurrentAccessToken().getUserId();
+            final String URL = awsURL + awsPORT + "/find-user/"+ AccessToken.getCurrentAccessToken().getUserId();
             Request request = new Request(Verb.GET, URL);
             Response resp = request.send();
             return resp.getBody();
@@ -96,7 +98,7 @@ public class LoginActivity extends Activity {
         @Override
         protected String doInBackground(Void... voids) {
 
-            final String URL = "http://10.0.2.2:9000/add-user/";
+            final String URL = awsURL + awsPORT + "/add-user/";
             Request request = new Request(Verb.POST, URL);
             StringBuilder payLoad = new StringBuilder();
             payLoad.append("{ \"id\" : \"");
@@ -115,7 +117,6 @@ public class LoginActivity extends Activity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
             try{
                 JSONObject jsonArray = new JSONObject(s);
                 MainActivity.setInfo(jsonArray.getString("_id"), jsonArray.getString("name"), "0","0" );
