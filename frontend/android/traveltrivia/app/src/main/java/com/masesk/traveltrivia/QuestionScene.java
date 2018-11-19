@@ -58,6 +58,8 @@ public class QuestionScene extends Activity implements RecognitionListener {
     private Button []answerButtons = new Button[4];
     private TextToSpeech tts;
     private String[] answerList = {"A", "Bee", "See", "Dee"};
+    private final String awsURL = "http://ec2-18-188-247-247.us-east-2.compute.amazonaws.com";
+    private final String awsPORT = ":9000";
     private boolean doneWithRequest = true;
     private int questionsAsked = 0;
     private int corrAnswers = 0;
@@ -282,7 +284,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
     public class updateInfo extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void... params) {
-            final String URL = "http://10.0.2.2:9000/update-correct-total/";
+            final String URL = awsURL + awsPORT + "/update-correct-total/";
             Request request = new Request(Verb.POST, URL);
             StringBuilder payLoad = new StringBuilder();
             payLoad.append("{ \"id\" : \"");
