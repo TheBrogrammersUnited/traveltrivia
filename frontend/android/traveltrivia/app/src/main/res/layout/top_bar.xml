@@ -28,7 +28,6 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_gravity="center"
-                android:layout_weight="1"
                 android:contentDescription="@string/app_name"
                 android:src="@drawable/com_facebook_profile_picture_blank_square"
                 tools:srcCompat="@drawable/com_facebook_profile_picture_blank_square" />
@@ -37,10 +36,7 @@
                 android:id="@+id/username"
                 android:layout_gravity="center"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
                 android:layout_width="match_parent"
-                android:layout_weight="1"
                 android:textColor="@color/black"
                 android:text="DB_USER"
                 android:textAlignment="center" />
@@ -59,8 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_weight="1"
-                android:text="Win/Total"
+                android:text="Correct/Total"
                 android:textAlignment="center"
                 android:textColor="@color/black" />
 
@@ -68,9 +63,6 @@
                 android:id="@+id/score"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_weight="1"
                 android:text="0/0"
                 android:textAlignment="center"
                 android:textColor="@color/black" />
@@ -87,7 +79,6 @@
                 android:id="@+id/currency"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_gravity="center"
                 android:textAlignment="center"
                 android:textColor="@color/black"
@@ -97,10 +88,7 @@
                 android:id="@+id/coins"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
                 android:textColor="@color/black"
-                android:layout_weight="1"
                 android:gravity="center"
                 android:text="0"
                 android:textAlignment="center" />

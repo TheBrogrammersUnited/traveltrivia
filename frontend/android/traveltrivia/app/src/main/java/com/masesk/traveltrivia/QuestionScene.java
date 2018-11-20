@@ -3,7 +3,6 @@ package com.masesk.traveltrivia;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -51,7 +50,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
     private LinearLayout layout;
     private TextView question;
     private TextView answeredView;
-    private TextView askedView;
+    private TextView incorrectView;
     private Queue<Question> questions;
     private Activity qS = this;
     private SpeechRecognizer recognizer;
@@ -77,7 +76,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
         layout.setBackgroundResource(R.drawable.background);
         questions = new LinkedList<Question>();
         question = new TextView(getApplicationContext());
-        askedView = new TextView(getApplicationContext());
+        incorrectView = new TextView(getApplicationContext());
         answeredView = new TextView(getApplicationContext());
         questionsAsked = Integer.parseInt(MainActivity.getTotal().trim());
         corrAnswers = Integer.parseInt(MainActivity.getCorrect().trim());
@@ -92,19 +91,19 @@ public class QuestionScene extends Activity implements RecognitionListener {
         LinearLayout scoreContainer = new LinearLayout(getApplicationContext());
         scoreContainer.setOrientation(LinearLayout.HORIZONTAL);
         scoreContainer.setLayoutParams(p);
-        askedView.setLayoutParams(p);
+        incorrectView.setLayoutParams(p);
         answeredView.setLayoutParams(p);
-        askedView.setGravity(Gravity.CENTER);
+        incorrectView.setGravity(Gravity.CENTER);
         answeredView.setGravity(Gravity.CENTER);
-        scoreContainer.addView(askedView);
+        scoreContainer.addView(incorrectView);
         scoreContainer.addView(answeredView);
-        askedView.setBackgroundResource(R.drawable.button_incorrect);
-        askedView.setTextColor(Color.WHITE);
+        incorrectView.setBackgroundResource(R.drawable.button_incorrect);
+        incorrectView.setTextColor(Color.WHITE);
         answeredView.setTextColor(Color.WHITE);
-        askedView.setTextSize(30);
+        incorrectView.setTextSize(30);
         answeredView.setTextSize(30);
-        exit.setTextSize(30);
-        exit.setText("STOP PLAYING");
+        exit.setTextSize(20);
+        exit.setText("QUIT");
         exit.setBackgroundResource(R.drawable.button);
         answeredView.setBackgroundResource(R.drawable.button_correct);
         tts= new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
@@ -136,7 +135,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
         }
         layout.setPadding(25, 25, 25, 25);
         question.setLayoutParams(p);
-        askedView.setText(Integer.toString(questionsAsked));
+        incorrectView.setText(Integer.toString(questionsAsked-corrAnswers));
         answeredView.setText(Integer.toString(corrAnswers));
         layout.addView(scoreContainer);
         layout.addView(exit);
@@ -200,21 +199,21 @@ public class QuestionScene extends Activity implements RecognitionListener {
     public class AnswerHandler implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            questionsAsked++;
             setButtonsEnabled(false);
             if(questions.peek().checkCorrectAnswer(((Button)view).getText().toString())){
                 ttsSpeak("Correct", TextToSpeech.QUEUE_FLUSH);
                 corrAnswers++;
-                topbar.setInfo(Integer.toString(corrAnswers), Integer.toString(questionsAsked));
                 answeredView.setText(Integer.toString(corrAnswers));
                 view.setBackgroundResource(R.drawable.button_correct);
             }
-            else{
-                questionsAsked++;
-                askedView.setText(Integer.toString(questionsAsked));
-                topbar.setInfo(Integer.toString(corrAnswers), Integer.toString(questionsAsked));
+            else {
+                incorrectView.setText(Integer.toString(questionsAsked-corrAnswers));
                 ttsSpeak("Incorrect. Correct answer is " + answerList[questions.peek().getCorrectIndex()] + ". " + questions.peek().getCorrectAnswer(), TextToSpeech.QUEUE_FLUSH);
                 view.setBackgroundResource(R.drawable.button_incorrect);
             }
+            topbar.setInfo(Integer.toString(corrAnswers), Integer.toString(questionsAsked));
+
             questions.remove();
             changedButton = (Button)view;
             if(!enoughQuestions()){
@@ -289,11 +288,11 @@ public class QuestionScene extends Activity implements RecognitionListener {
             StringBuilder payLoad = new StringBuilder();
             payLoad.append("{ \"id\" : \"");
             payLoad.append(AccessToken.getCurrentAccessToken().getUserId());
-            payLoad.append("\" , \"total\" : \" ");
+            payLoad.append("\" , \"total\" : \"");
             payLoad.append(questionsAsked);
-            payLoad.append(" \", \"correct\" : \" ");
+            payLoad.append("\", \"correct\" : \"");
             payLoad.append(corrAnswers);
-            payLoad.append("\" }");
+            payLoad.append("\"}");
             request.addHeader("Content-Type", "application/json;charset=UTF-8");
             request.addPayload(payLoad.toString());
             // request.addBodyParameter("id", AccessToken.getCurrentAccessToken().getApplicationId());
@@ -381,6 +380,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
         WeakReference<QuestionScene> activityReference;
         SetupTask(QuestionScene activity) {
             this.activityReference = new WeakReference<>(activity);
+
         }
         @Override
         protected Exception doInBackground(Void... params) {
@@ -504,20 +504,19 @@ public class QuestionScene extends Activity implements RecognitionListener {
 
     public void setAnswerUsingVR(int buttonIndex){
         setButtonsEnabled(false);
+        questionsAsked++;
         if(questions.peek().checkCorrectAnswer(answerButtons[buttonIndex].getText().toString())){
             ttsSpeak("Correct", TextToSpeech.QUEUE_FLUSH);
             corrAnswers++;
             answeredView.setText(Integer.toString(corrAnswers));
-            topbar.setInfo(Integer.toString(corrAnswers), Integer.toString(questionsAsked));
             answerButtons[buttonIndex].setBackgroundResource(R.drawable.button_correct);
         }
         else{
-            questionsAsked++;
-            askedView.setText(Integer.toString(questionsAsked));
-            topbar.setInfo(Integer.toString(corrAnswers), Integer.toString(questionsAsked));
+            incorrectView.setText(Integer.toString(questionsAsked-corrAnswers));
             ttsSpeak("Incorrect. Correct answer is " + answerList[questions.peek().getCorrectIndex()] + ". " + questions.peek().getCorrectAnswer(), TextToSpeech.QUEUE_FLUSH);
             answerButtons[buttonIndex].setBackgroundResource(R.drawable.button_incorrect);
         }
+        topbar.setInfo(Integer.toString(corrAnswers), Integer.toString(questionsAsked));
         questions.remove();
         changedButton = answerButtons[buttonIndex];
         if(!enoughQuestions()){
