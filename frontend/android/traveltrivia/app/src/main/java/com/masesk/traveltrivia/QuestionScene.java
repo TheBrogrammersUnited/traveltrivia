@@ -73,7 +73,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question_scene);
-        layout = (LinearLayout)findViewById(R.id.layout); //find main layout from activity_question_scene.xml
+        layout = (LinearLayout)findViewById(R.id.layout);
         layout.setBackgroundResource(R.drawable.background);
         questions = new LinkedList<Question>();
         question = new TextView(getApplicationContext());
@@ -338,6 +338,12 @@ public class QuestionScene extends Activity implements RecognitionListener {
 
             }
         }, 4000);
+    }
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        new updateInfo().execute();
     }
 
     /************************************************************************************

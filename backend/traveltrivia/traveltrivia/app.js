@@ -170,7 +170,6 @@ app.post('/update-correct-total', function (req, res) {
 
 
 app.get('/find-user/:id', function (req, res) {
-    console.log("request to find user recieved..");
     console.log(req.url);
     MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         console.log("\n--------START OF CONNECTION--------\n");
