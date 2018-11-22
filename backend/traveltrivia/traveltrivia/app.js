@@ -2,6 +2,7 @@ var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://127.0.0.1:27017/mydb";
 const express = require('express')
 const bodyParser = require('body-parser');
+const request = require('request');
 const app = express();
 const port = 9000;
 var d = new Date();
@@ -25,6 +26,52 @@ app.get('/', function (req, res) {
     res.send(resText);
     console.log("RESP :", resText);
     console.log("\n--------END OF CONNECTION--------\n\n");
+});
+
+app.get('/get-location-question/:la&:lo', function (req, res) {
+    console.log("\n--------START OF CONNECTION--------\n");
+    console.log("TIME :", d.toISOString());
+    console.log("TYPE :", "GET");
+    console.log("URL :", req.url);
+    var lola = req.params.la + "," + req.params.lo;
+    request({
+        url: 'https://api.foursquare.com/v2/venues/search',
+        method: 'GET',
+        qs: {
+            client_id: 'IA2NOA32N1DSXWKGLL3EEH3EM5LTOEQUIE3C35D3FQIQ1KVF0',
+            client_secret: '0JK05IWNFDGFASBCEWBUKBTWFCVDZGPC3K0LW5R1TAJE2H5I',
+            ll: lola,
+            radius: '500',
+            intent: 'browse',
+            v: '20180323',
+            limit: 5
+        }
+    }, function (err, response, msg) {
+        if (err) {
+            console.error(err);
+        } else {
+            var body = JSON.parse(msg);
+            var l = body.response.venues.length;
+            var dist = distance(parseFloat(body.response.venues[index].location.lat), parseFloat(body.response.venues[index].location.lng), parseFloat(req.params.la), parseFloat(req.params.lo));
+            var index = Math.floor(Math.random() * (+l - +0)) + +0; 
+            var o = {} // empty Object
+            var key = 'results';
+            o[key] = [];
+            var data = {
+                category: 'Location',
+                type: 'multiple',
+                difficulty: 'none',
+                question: 'How far is ' + body.response.venues[index].name + ' from your current location?',
+                correct_answer: dist,
+                incorrect_answer: [dist + 0.1, dist - 0.1, dist + 0.2]
+            };
+            o[key].push(data);
+            //console.log(JSON.stringify(o));
+            res.send(JSON.stringify(o));
+            console.log("\n--------END OF CONNECTION--------\n\n");
+        }
+    });
+
 });
 
 app.get('/get-all-users', function (req, res) {
@@ -197,3 +244,18 @@ app.get('/find-user/:id', function (req, res) {
 var server = app.listen(port, function () {
     console.log("We have started our server on port 9000");
 });
+
+
+function distance(lat1, lon1, lat2, lon2) {
+    var p = 0.017453292519943295;
+    var c = Math.cos;
+    var a = 0.5 - c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) *
+        (1 - c((lon2 - lon1) * p)) / 2;
+
+    return 12742 * Math.asin(Math.sqrt(a));
+}
+
+function kmToMiles(distInKm) {
+    return 0.6213712 * distInKm;
+}
