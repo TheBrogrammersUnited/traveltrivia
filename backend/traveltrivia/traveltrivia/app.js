@@ -38,13 +38,14 @@ app.get('/get-location-question/:la&:lo', function (req, res) {
         url: 'https://api.foursquare.com/v2/venues/search',
         method: 'GET',
         qs: {
-            client_id: 'IA2NOA32N1DSXWKGLL3EEH3EM5LTOEQUIE3C35D3FQIQ1KVF0',
+            client_id: 'IA2NOA32N1DSXWKGLL3EEH3EMLTOEQUIE3C35D3FQIQ1KVF0',
             client_secret: '0JK05IWNFDGFASBCEWBUKBTWFCVDZGPC3K0LW5R1TAJE2H5I',
             ll: lola,
-            radius: '500',
+            query: 'restaurant',
+            radius: '2000',
             intent: 'browse',
             v: '20180323',
-            limit: 5
+            limit: 7
         }
     }, function (err, response, msg) {
         if (err) {
@@ -52,8 +53,10 @@ app.get('/get-location-question/:la&:lo', function (req, res) {
         } else {
             var body = JSON.parse(msg);
             var l = body.response.venues.length;
-            var dist = distance(parseFloat(body.response.venues[index].location.lat), parseFloat(body.response.venues[index].location.lng), parseFloat(req.params.la), parseFloat(req.params.lo));
-            var index = Math.floor(Math.random() * (+l - +0)) + +0; 
+            var index = Math.floor(Math.random() * (+l - +0)); 
+            var kmdist = distance(parseFloat(body.response.venues[index].location.lat), parseFloat(body.response.venues[index].location.lng), parseFloat(req.params.la), parseFloat(req.params.lo));
+            var dist = kmToMiles(kmdist);
+            var incorrect = [dist + Math.random() % l, dist + Math.random() % (l / 4) - 0.2, dist % l * l / 4];
             var o = {} // empty Object
             var key = 'results';
             o[key] = [];
@@ -62,8 +65,8 @@ app.get('/get-location-question/:la&:lo', function (req, res) {
                 type: 'multiple',
                 difficulty: 'none',
                 question: 'How far is ' + body.response.venues[index].name + ' from your current location?',
-                correct_answer: dist,
-                incorrect_answer: [dist + 0.1, dist - 0.1, dist + 0.2]
+                correct_answer: dist.toFixed(2),
+                incorrect_answer: [incorrect[0].toFixed(2), incorrect[1].toFixed(2), incorrect[2].toFixed(2)]
             };
             o[key].push(data);
             //console.log(JSON.stringify(o));
@@ -258,4 +261,14 @@ function distance(lat1, lon1, lat2, lon2) {
 
 function kmToMiles(distInKm) {
     return 0.6213712 * distInKm;
+}
+
+
+process.on('uncaughtException', UncaughtExceptionHandler);
+
+function UncaughtExceptionHandler(err) {
+    console.log("Uncaught Exception Encountered!!");
+    console.log("err: ", err);
+    console.log("Stack trace: ", err.stack);
+    setInterval(function () { }, 1000);
 }
