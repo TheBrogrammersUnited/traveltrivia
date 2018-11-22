@@ -47,7 +47,8 @@ const NewsItem = ({item}) => {
 		<div>
 			<Question
 				question={item.question}
-				
+				category={item.category}
+				difficulty = {item.difficulty}
 			/>
 			<Answer 
 				correctAnswer = {item.correct_answer}
