@@ -20,10 +20,12 @@ MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
 app.get('/', function (req, res) {
     console.log("\n--------START OF CONNECTION--------\n");
     console.log("TIME :", d.toISOString());
+    console.log("HOST : ", req.hostname);
+    console.log("IP : ", req.ip);
     console.log("TYPE :", "GET");
     console.log("URL :", req.url);
     resText = "Server time is " + d.toISOString();
-    res.send(resText);
+    res.json(resText);
     console.log("RESP :", resText);
     console.log("\n--------END OF CONNECTION--------\n\n");
 });
@@ -57,7 +59,7 @@ app.get('/get-location-question/:la&:lo', function (req, res) {
             var kmdist = distance(parseFloat(body.response.venues[index].location.lat), parseFloat(body.response.venues[index].location.lng), parseFloat(req.params.la), parseFloat(req.params.lo));
             var dist = kmToMiles(kmdist);
             var incorrect = [dist + Math.random() % l,  dist - (dist/2) + Math.random() , dist % l * l / 4];
-            var o = {} // empty Object
+            var o = {};
             var key = 'results';
             o[key] = [];
             var data = {
@@ -70,7 +72,7 @@ app.get('/get-location-question/:la&:lo', function (req, res) {
             };
             o[key].push(data);
             //console.log(JSON.stringify(o));
-            res.send(JSON.stringify(o));
+            res.json(o);
             console.log("\n--------END OF CONNECTION--------\n\n");
         }
     });
@@ -85,7 +87,7 @@ app.get('/get-all-users', function (req, res) {
         console.log("URL :", req.url);
         var dbo = db.db("mydb");
         dbo.collection("users").find({}).toArray(function (err, result) {
-            res.send(result);
+            res.json(result);
             console.log("RESP :", result);
             console.log("\n--------END OF CONNECTION--------\n\n");
             db.close();
@@ -103,7 +105,7 @@ app.post('/add-user', function (req, res) {
         console.log("URL :", req.url);
         var dbo = db.db("mydb");
         var myobj = { _id: req.body.id, name: req.body.name, correct: 0, total: 0 };
-        res.send(myobj);
+        res.json(myobj);
         console.log("RESP :", myobj);
         dbo.collection("users").insertOne(myobj, function (err, result) {
             db.close();
@@ -126,7 +128,7 @@ app.post('/update-total', function (req, res) {
             $set: { total: req.body.total }
         };
         dbo.collection("users").updateOne(query, myobj, function (err, result) {
-            res.send(result);
+            res.json(result);
             console.log("RESP :", query, myobj);
             console.log("\n--------END OF CONNECTION--------\n\n");
             db.close();
@@ -140,16 +142,16 @@ app.get('/get-total/:id', function (req, res) {
         console.log("TIME :", d.toISOString());
         console.log("TYPE :", "GET");
         console.log("URL :", req.url);
-        var response = JSON.stringify({ total: -1 });
+        var response = { total: -1 };
         var dbo = db.db("mydb");
         var id = req.params.id;
         dbo.collection("users").findOne({ _id: id }, function (err, result) {
             if (result != null) {
-                response = JSON.stringify({ total: result.total });
+                response = { total: result.total };
             }
             console.log("RESP :", response);
             console.log("\n--------END OF CONNECTION--------\n\n");
-            res.send(response);
+            res.json(response);
             db.close();
         });
     });
@@ -161,15 +163,15 @@ app.get('/get-correct/:id', function (req, res) {
         console.log("TIME :", d.toISOString());
         console.log("TYPE :", "GET");
         console.log("URL :", req.url);
-        var response = JSON.stringify({ correct: -1});
+        var response = { correct: -1};
         var dbo = db.db("mydb");
         var id = req.params.id;
         dbo.collection("users").findOne({ _id: id }, function (err, result) {
             if (result != null) {
-                response = JSON.stringify({ correct: result.correct});
+                response = {correct: result.correct};
             }
             console.log("RESP :", response);
-            res.send(response);
+            res.json(response);
             console.log("\n--------END OF CONNECTION--------\n\n");
             db.close();
         });
@@ -190,7 +192,7 @@ app.post('/update-correct', function (req, res) {
         };
         console.log("RESP :", query, myobj);
         dbo.collection("users").updateOne(query, myobj, function (err, result) {
-            res.send("OK");
+            res.json("{status: 1}");
             console.log("\n--------END OF CONNECTION--------\n\n");
             db.close();
         });
@@ -210,7 +212,7 @@ app.post('/update-correct-total', function (req, res) {
             $set: { correct: req.body.correct, total: req.body.total },
         };
         dbo.collection("users").updateOne(query, myobj, function (err, result) {
-            res.send("OK");
+            res.json("{status:1}");
             console.log("RESP :", query, myobj);
             console.log("\n--------END OF CONNECTION--------\n\n");
             db.close();
@@ -226,14 +228,15 @@ app.get('/find-user/:id', function (req, res) {
         console.log("TIME :", d.toISOString());
         console.log("TYPE :", "GET");
         console.log("URL :", req.url);
-        var response = JSON.stringify({ _id: -1 });
+        var response = { _id: -1 };
         var dbo = db.db("mydb");
         var id = req.params.id;
         dbo.collection("users").findOne({ _id: id }, function (err, result) {
             if (result != null) {
                 response = result;
             }
-            res.send(response);
+            //res.set('Content-Type', 'application/json');
+            res.json(response);
             console.log("RESP :", response);
             console.log("\n--------END OF CONNECTION--------\n\n");
             db.close();

@@ -400,7 +400,9 @@ public class QuestionScene extends Activity implements RecognitionListener {
             public void run() {
                 setButtonsEnabled(true);
                 changedButton.setBackgroundResource(R.drawable.button);
-                recognizer.startListening("listen");
+                if(recognizer != null) {
+                    recognizer.startListening("listen");
+                }
                 stopListening = false;
                 setUpQuestion();
 
@@ -413,6 +415,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
     {
         super.onPause();
         new updateInfo().execute();
+        tts.stop();
     }
 
     /************************************************************************************
@@ -431,8 +434,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
                 // Recognizer initialization is a time-consuming and it involves IO,
                 // so we execute it in async task
                 new SetupTask(this).execute();
-            } else {
-                finish();
             }
         }
     }
