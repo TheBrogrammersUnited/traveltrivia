@@ -1,8 +1,10 @@
 package com.masesk.traveltrivia;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -62,6 +64,10 @@ public class MainActivity extends Activity  {
 
 
                 if(isLoggedIn){
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[] {
+                                    Manifest.permission.ACCESS_FINE_LOCATION,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION },
+                            1);
                     usernameField.setText(name);
                     winLossScore.setText(correct + "/" + total);
                     GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {

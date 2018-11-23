@@ -56,7 +56,7 @@ app.get('/get-location-question/:la&:lo', function (req, res) {
             var index = Math.floor(Math.random() * (+l - +0)); 
             var kmdist = distance(parseFloat(body.response.venues[index].location.lat), parseFloat(body.response.venues[index].location.lng), parseFloat(req.params.la), parseFloat(req.params.lo));
             var dist = kmToMiles(kmdist);
-            var incorrect = [dist + Math.random() % l, dist + Math.random() % (l / 4) - 0.2, dist % l * l / 4];
+            var incorrect = [dist + Math.random() % l,  dist - (dist/2) + Math.random() , dist % l * l / 4];
             var o = {} // empty Object
             var key = 'results';
             o[key] = [];

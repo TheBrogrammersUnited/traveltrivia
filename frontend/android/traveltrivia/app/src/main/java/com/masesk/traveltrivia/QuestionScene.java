@@ -3,10 +3,13 @@ package com.masesk.traveltrivia;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,10 +24,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.facebook.AccessToken;
-import com.facebook.Profile;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +38,6 @@ import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Queue;
-
 import edu.cmu.pocketsphinx.Assets;
 import edu.cmu.pocketsphinx.Hypothesis;
 import edu.cmu.pocketsphinx.RecognitionListener;
@@ -52,6 +51,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
     private TextView answeredView;
     private TextView incorrectView;
     private Queue<Question> questions;
+    private Question locationQuestion;
     private Activity qS = this;
     private SpeechRecognizer recognizer;
     private Button []answerButtons = new Button[4];
@@ -68,6 +68,10 @@ public class QuestionScene extends Activity implements RecognitionListener {
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
     private boolean stopListening = false;
     private TopBar topbar;
+    private LocationManager lm;
+    private boolean firstReq = true;
+    private Question currQuestion;
+    private Location location;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +85,10 @@ public class QuestionScene extends Activity implements RecognitionListener {
         questionsAsked = Integer.parseInt(MainActivity.getTotal().trim());
         corrAnswers = Integer.parseInt(MainActivity.getCorrect().trim());
         exit = new Button(getApplicationContext());
+
         topbar = (TopBar) getFragmentManager().findFragmentById(R.id.fragment);
+        lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        Location location;
         question.setBackgroundResource(R.drawable.question);
         question.setGravity(Gravity.CENTER);
         question.setPadding(25, 25, 25, 25);
@@ -201,7 +208,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
         public void onClick(View view) {
             questionsAsked++;
             setButtonsEnabled(false);
-            if(questions.peek().checkCorrectAnswer(((Button)view).getText().toString())){
+            if(currQuestion.checkCorrectAnswer(((Button)view).getText().toString())){
                 ttsSpeak("Correct", TextToSpeech.QUEUE_FLUSH);
                 corrAnswers++;
                 answeredView.setText(Integer.toString(corrAnswers));
@@ -209,12 +216,11 @@ public class QuestionScene extends Activity implements RecognitionListener {
             }
             else {
                 incorrectView.setText(Integer.toString(questionsAsked-corrAnswers));
-                ttsSpeak("Incorrect. Correct answer is " + answerList[questions.peek().getCorrectIndex()] + ". " + questions.peek().getCorrectAnswer(), TextToSpeech.QUEUE_FLUSH);
+                ttsSpeak("Incorrect. Correct answer is " + answerList[currQuestion.getCorrectIndex()] + ". " + currQuestion.getCorrectAnswer(), TextToSpeech.QUEUE_FLUSH);
                 view.setBackgroundResource(R.drawable.button_incorrect);
             }
             topbar.setInfo(Integer.toString(corrAnswers), Integer.toString(questionsAsked));
 
-            questions.remove();
             changedButton = (Button)view;
             if(!enoughQuestions()){
                 if(doneWithRequest) {
@@ -223,6 +229,28 @@ public class QuestionScene extends Activity implements RecognitionListener {
                 }
             }
             waitAfterCorrect();
+            if (ContextCompat.checkSelfPermission(QuestionScene.this, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+                    PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(QuestionScene.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                            PackageManager.PERMISSION_GRANTED && Math.random() > 0.88) {
+
+
+                 location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                 new LocationQuestion().execute(location.getLatitude()+"&"+location.getLongitude());
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+
+                    public void run() {
+                        if(currQuestion == null){
+                            currQuestion = questions.remove();
+                        }
+
+                    }
+                }, 1);
+            }
+            else {
+                currQuestion = questions.remove();
+           }
         }
     }
 
@@ -271,7 +299,11 @@ public class QuestionScene extends Activity implements RecognitionListener {
                     questions.add(question);
                 }
                 doneWithRequest = true;
-                setUpQuestion();
+                if(firstReq) {
+                    currQuestion = questions.remove();
+                    setUpQuestion();
+                    firstReq = false;
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -307,15 +339,53 @@ public class QuestionScene extends Activity implements RecognitionListener {
         }
     }
 
-    public void setUpQuestion(){
-        question.setText(questions.peek().getQuestion());
-        question.setTextSize(25);
-        ttsSpeak(questions.peek().getQuestion(), TextToSpeech.QUEUE_ADD);
+    public class LocationQuestion extends AsyncTask<String, Void, String>{
+        @Override
+        protected String doInBackground(String... params) {
+            final String URL = awsURL + awsPORT + "/get-location-question/" + params[0];
+            Request request = new Request(Verb.GET, URL);
+            Response resp = request.send();
+            return resp.getBody();
+        }
 
-        for(int i = 0; i < questions.peek().getAnswers().length; i++){
+        @Override
+        protected void onPostExecute(String s) {
+
+            super.onPostExecute(s);
+            //Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+            Question question;
+            String[] answers;
+            //Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+            try {
+                JSONObject jObject = new JSONObject(s);
+                JSONArray jArray = jObject.getJSONArray("results");
+                for(int i = 0; i < jArray.length(); i++) {
+                    question = new Question();
+                    answers = new String[4];
+                    JSONObject temp = jArray.getJSONObject(i);
+                    question.setQuestion(temp.getString("question"));
+                    answers[0] = Parser.unescapeEntities(temp.getString("correct_answer"), true);
+                    JSONArray wrongs = new JSONArray(temp.getString("incorrect_answers"));
+                    for(int j = 0; j < wrongs.length(); j++){
+                        answers[j+1] = Parser.unescapeEntities(wrongs.getString(j), true);
+                    }
+                    question.setAnswers(answers);
+                    currQuestion = question;
+                }
+            }catch (JSONException e){
+
+            }
+        }
+    }
+
+    public void setUpQuestion(){
+        question.setText(currQuestion.getQuestion());
+        question.setTextSize(25);
+        ttsSpeak(currQuestion.getQuestion(), TextToSpeech.QUEUE_ADD);
+        for(int i = 0; i < currQuestion.getAnswers().length; i++){
             ttsSpeak(answerList[i], TextToSpeech.QUEUE_ADD);
-            ttsSpeak(questions.peek().getAnswers()[i], TextToSpeech.QUEUE_ADD);
-           answerButtons[i].setText(questions.peek().getAnswers()[i]);
+            ttsSpeak(currQuestion.getAnswers()[i], TextToSpeech.QUEUE_ADD);
+            answerButtons[i].setText(currQuestion.getAnswers()[i]);
         }
     }
 
@@ -505,7 +575,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
     public void setAnswerUsingVR(int buttonIndex){
         setButtonsEnabled(false);
         questionsAsked++;
-        if(questions.peek().checkCorrectAnswer(answerButtons[buttonIndex].getText().toString())){
+        if(currQuestion.checkCorrectAnswer(answerButtons[buttonIndex].getText().toString())){
             ttsSpeak("Correct", TextToSpeech.QUEUE_FLUSH);
             corrAnswers++;
             answeredView.setText(Integer.toString(corrAnswers));
@@ -513,11 +583,10 @@ public class QuestionScene extends Activity implements RecognitionListener {
         }
         else{
             incorrectView.setText(Integer.toString(questionsAsked-corrAnswers));
-            ttsSpeak("Incorrect. Correct answer is " + answerList[questions.peek().getCorrectIndex()] + ". " + questions.peek().getCorrectAnswer(), TextToSpeech.QUEUE_FLUSH);
+            ttsSpeak("Incorrect. Correct answer is " + answerList[currQuestion.getCorrectIndex()] + ". " + currQuestion.getCorrectAnswer(), TextToSpeech.QUEUE_FLUSH);
             answerButtons[buttonIndex].setBackgroundResource(R.drawable.button_incorrect);
         }
         topbar.setInfo(Integer.toString(corrAnswers), Integer.toString(questionsAsked));
-        questions.remove();
         changedButton = answerButtons[buttonIndex];
         if(!enoughQuestions()){
             if(doneWithRequest) {
@@ -526,6 +595,28 @@ public class QuestionScene extends Activity implements RecognitionListener {
             }
         }
         waitAfterCorrect();
+        if (ContextCompat.checkSelfPermission(QuestionScene.this, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(QuestionScene.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                        PackageManager.PERMISSION_GRANTED && Math.random() > 0.88) {
+
+
+            location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            new LocationQuestion().execute(location.getLatitude()+"&"+location.getLongitude());
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+
+                public void run() {
+                    if(currQuestion == null){
+                        currQuestion = questions.remove();
+                    }
+
+                }
+            }, 1);
+        }
+        else {
+            currQuestion = questions.remove();
+        }
     }
 
     public void ttsSpeak(String input, int speakType){
