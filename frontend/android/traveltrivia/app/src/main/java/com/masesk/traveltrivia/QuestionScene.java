@@ -18,6 +18,7 @@ import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -401,6 +402,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
                 setButtonsEnabled(true);
                 changedButton.setBackgroundResource(R.drawable.button);
                 if(recognizer != null) {
+                    recognizer.stop();
                     recognizer.startListening("listen");
                 }
                 stopListening = false;
@@ -528,9 +530,10 @@ public class QuestionScene extends Activity implements RecognitionListener {
         if (hypothesis != null) {
             String text = hypothesis.getHypstr();
             handleOptionUsingVR(text);
-            recognizer.stop();
+            //recognizer.stop();
             if(!stopListening) {
                 ttsSpeak("listening", TextToSpeech.QUEUE_FLUSH);
+                recognizer.stop();
                 recognizer.startListening("options");
             }
         }
@@ -538,32 +541,30 @@ public class QuestionScene extends Activity implements RecognitionListener {
 
     @Override
     public void onError(Exception e) {
-
+        Log.d("sphinx", e.getMessage());
     }
 
     @Override
     public void onTimeout() {
+        recognizer.stop();
         recognizer.startListening("listen");
     }
 
     public void handleOptionUsingVR(String option){
             if(!option.equals("listen")){
+                recognizer.stop();
                 stopListening = true;
                 switch (option){
                     case "ay":
-                        ttsSpeak("You selected " + answerList[0], TextToSpeech.QUEUE_FLUSH);
                         setAnswerUsingVR(0);
                         break;
                     case "bee":
-                        ttsSpeak("You selected " + answerList[1], TextToSpeech.QUEUE_FLUSH);
                         setAnswerUsingVR(1);
                         break;
                     case "see":
-                        ttsSpeak("You selected " + answerList[2], TextToSpeech.QUEUE_FLUSH);
                         setAnswerUsingVR(2);
                         break;
                     case "dee":
-                        ttsSpeak("You selected " + answerList[3], TextToSpeech.QUEUE_FLUSH);
                         setAnswerUsingVR(3);
                         break;
                 }
