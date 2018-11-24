@@ -45,7 +45,6 @@ import edu.cmu.pocketsphinx.RecognitionListener;
 import edu.cmu.pocketsphinx.SpeechRecognizer;
 import edu.cmu.pocketsphinx.SpeechRecognizerSetup;
 
-
 public class QuestionScene extends Activity implements RecognitionListener {
     private LinearLayout layout;
     private TextView question;
@@ -172,6 +171,10 @@ public class QuestionScene extends Activity implements RecognitionListener {
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         tts.shutdown();
+                        if (recognizer != null) {
+                            recognizer.cancel();
+                            recognizer.shutdown();
+                        }
                         startActivity(intent);
 
                     }
@@ -365,10 +368,10 @@ public class QuestionScene extends Activity implements RecognitionListener {
                     answers = new String[4];
                     JSONObject temp = jArray.getJSONObject(i);
                     question.setQuestion(temp.getString("question"));
-                    answers[0] = Parser.unescapeEntities(temp.getString("correct_answer"), true);
+                    answers[0] = Parser.unescapeEntities(temp.getString("correct_answer"), true) + " miles";
                     JSONArray wrongs = new JSONArray(temp.getString("incorrect_answers"));
                     for(int j = 0; j < wrongs.length(); j++){
-                        answers[j+1] = Parser.unescapeEntities(wrongs.getString(j), true);
+                        answers[j+1] = Parser.unescapeEntities(wrongs.getString(j), true) + " miles";
                     }
                     question.setAnswers(answers);
                     currQuestion = question;
@@ -533,6 +536,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
             //recognizer.stop();
             if(!stopListening) {
                 ttsSpeak("listening", TextToSpeech.QUEUE_FLUSH);
+                setButtonsEnabled(false);
                 recognizer.stop();
                 recognizer.startListening("options");
             }
@@ -575,7 +579,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
 
 
     public void setAnswerUsingVR(int buttonIndex){
-        setButtonsEnabled(false);
         questionsAsked++;
         if(currQuestion.checkCorrectAnswer(answerButtons[buttonIndex].getText().toString())){
             ttsSpeak("Correct", TextToSpeech.QUEUE_FLUSH);
