@@ -248,11 +248,24 @@ app.get('/find-user/:id', function (req, res) {
 
 
 
+
+var privateKey = fs.readFileSync( 'sslkey.pem' );
+var certificate = fs.readFileSync( 'server.crt' );
+
+https.createServer({
+key: privateKey,
+cert: certificate
+}, app).listen(port);
+
+
+
+
+/*
 var server = app.listen(port, function () {
     //console.log("We have started our server on port 9000");
 	console.log("We have started our server on port 443");
 });
-
+*/
 
 function distance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;
