@@ -3,25 +3,40 @@
 <head>
 <link rel="stylesheet" type="text/css" href="index.css">
 <link rel="stylesheet" type="text/css" href="login.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="js/home-control.js"></script>
 <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
 <title>Travel Trivia</title>
-
 </head>
+
 <body>
 <div class ="logo">
 <img src="img/logo.png" alt="Car Trivia">
-<h2>Hands Free Trivia Game<h2>
+<h2>Travel Trivia</h2>
 </div>
-<div class="box">
-	<form action = "">
-	<label>Username</label>
-    <input type="text" id="username" name="username" class="login-input" placeholder="Username" value = "" autofocus>
-	<label>Password</label>
-    <input type="password" id="password" name="password" class="login-input" value="" placeholder="Password">
-	<input type="submit" value="SIGN IN" class="login-button">
-	</form>
-	<input type="submit"  id="facebook" value="LOGIN/SIGNUP WITH FACEBOOK" class="login-button">
+
+<div id="logInDiv">
+	<div id="fb-root"></div>
+	<script>(function(d, s, id) {
+	  var js, fjs = d.getElementsByTagName(s)[0];
+	  if (d.getElementById(id)) return;
+	  js = d.createElement(s); js.id = id;
+	  js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.2&appId=768723920131103&autoLogAppEvents=1';
+	  fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));</script>
+
+	<div class="box">
+		<div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="true"></div>
+	</div>
 </div>
+
+<div id="loggedInDiv">
+	<button id="logoutButton">Logout</button>
+	<p id="welcome"></p>
+	<p id="correctText"></p>
+	<p id="totalText"></p>
+	<p id="errorMessage"></p>
+</div>
+
 </body>
-<script src="index.js"></script>
 </html>

@@ -25,6 +25,10 @@ label{
 	color: white;
 }
 
+#loggedInDiv{
+    display: none;
+}
+
 
 .logo{
 	
