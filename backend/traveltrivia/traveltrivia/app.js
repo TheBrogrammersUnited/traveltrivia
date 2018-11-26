@@ -4,8 +4,7 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const request = require('request');
 const app = express();
-//const port = 9000;
-const port = 443;
+const port = 9000;
 var d = new Date();
 
 app.use(bodyParser.json());
@@ -245,27 +244,17 @@ app.get('/find-user/:id', function (req, res) {
     });
 });
 
-
-
-
-
-var privateKey = fs.readFileSync( 'sslkey.pem' );
-var certificate = fs.readFileSync( 'server.crt' );
-
-https.createServer({
-key: privateKey,
-cert: certificate
-}, app).listen(port);
-
-
-
-
-/*
-var server = app.listen(port, function () {
-    //console.log("We have started our server on port 9000");
-	console.log("We have started our server on port 443");
+app.use(function(req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	next();
 });
-*/
+
+
+var server = app.listen(port, function () {
+  console.log("We have started our server on port 9000");	
+});
+
 
 function distance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;
