@@ -423,7 +423,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
                 }
                 recognizer.startListening("listen");
             }
-        }, 0);
+        }, 10);
 
     }
 
@@ -563,12 +563,9 @@ public class QuestionScene extends Activity implements RecognitionListener {
                 setButtonsEnabled(false);
                 new Handler().postDelayed(new Runnable() {
                     public void run() {
-                        while(tts.isSpeaking()){
-
-                        }
                         recognizer.startListening("options");
                     }
-                }, 10);
+                }, 200);
             }
         }
         else if(recognizer.getSearchName().equals("options")){
