@@ -6,17 +6,20 @@ class questionData extends Component{
 		super(props);
 		let index=0;
 		let questionArray = [];
+		// let answerArray = [];
+
 		props.questionData.map((props) => {
 			questionArray.push(props);
+			
 		});
-		let answerArray = [questionArray[index].correct_answer,questionArray[index].incorrect_answers[0],questionArray[index].incorrect_answers[1],questionArray[index].incorrect_answers[2]];
+		 
 		
 		this.state = {
 			questionArray :questionArray,
 			index: index,
 			correctCount: 0,
 			incorrectCount: 0,
-			answerArray2 : this.shuffle(answerArray),
+			// answerArray2 : answerArray[index],
 			correctAnswer :props.correctAnswer
 		}
 		
@@ -40,6 +43,10 @@ class questionData extends Component{
 
 	render(){
 
+		let answerArray=this.shuffle([this.state.questionArray[this.state.index].correct_answer,
+										this.state.questionArray[this.state.index].incorrect_answers[0],
+										this.state.questionArray[this.state.index].incorrect_answers[1],
+										this.state.questionArray[this.state.index].incorrect_answers[2]]);
 		return(
 			<div>
 				<div className = 'bg-white helvetica dib br4 ba bw1 pa3 ma2'>
@@ -59,7 +66,7 @@ class questionData extends Component{
 						className = 'bg-white dib br3 ba bw1 pa3 ma2 grow' 
 						onClick ={ () =>
 										{
-											if (this.state.questionArray[this.state.index].correct_answer  ===  this.state.answerArray2[0])
+											if (this.state.questionArray[this.state.index].correct_answer  ===  answerArray[0])
 											{
 												this.setState({
 													correctCount: this.state.correctCount +1
@@ -72,23 +79,22 @@ class questionData extends Component{
 											this.setState({
 											 	index : this.state.index+1
 											})
-this.answerArray = [this.state.questionArray[this.state.index].correct_answer,
-this.state.questionArray[this.state.index].incorrect_answers[0],
-this.state.questionArray[this.state.index].incorrect_answers[1],
-this.state.questionArray[this.state.index].incorrect_answers[2]];
+											
+
+
 
 		
 										}
 									}		
 					>
-						{this.state.answerArray2[0]}
+						{answerArray[0]}
 					</button>
 
 					<button 
 						className = 'bg-white dib br3 ba bw1 pa3 ma2 grow' 
 						onClick = 	{ () =>
 										{
-											if (this.state.questionArray[this.state.index].correct_answer  ===  this.state.answerArray2[1])
+											if (this.state.questionArray[this.state.index].correct_answer  ===  answerArray[1])
 											{
 												this.setState({
 													correctCount: this.state.correctCount +1
@@ -100,20 +106,20 @@ this.state.questionArray[this.state.index].incorrect_answers[2]];
 											this.setState({
 											 	index : this.state.index+1
 											})
-this.answerArray = [this.state.questionArray[this.state.index].correct_answer,this.state.questionArray[this.state.index].incorrect_answers[0],this.state.questionArray[this.state.index].incorrect_answers[1],this.state.questionArray[this.state.index].incorrect_answers[2]];
+
 
 											}
 										}
 									}		
 					>
-						{this.state.answerArray2[1]}
+						{answerArray[1]}
 					</button><br/>
 
 					<button 
 						className = 'bg-white dib br3 ba bw1 pa3 ma2 grow' 
 						onClick = 	{ () =>
 										{
-											if (this.state.questionArray[this.state.index].correct_answer  ===  this.state.answerArray2[2])
+											if (this.state.questionArray[this.state.index].correct_answer  ===  answerArray[2])
 											{
 												this.setState({
 													correctCount: this.state.correctCount +1
@@ -125,25 +131,20 @@ this.answerArray = [this.state.questionArray[this.state.index].correct_answer,th
 											this.setState({
 											 	index : this.state.index+1
 											})
-this.answerArray = [
-	this.state.questionArray[this.state.index].correct_answer,
-	this.state.questionArray[this.state.index].incorrect_answers[0],
-	this.state.questionArray[this.state.index].incorrect_answers[1],
-	this.state.questionArray[this.state.index].incorrect_answers[2]
-];
+
 
 											}
 										}
 									}		
 					>
-						{this.state.answerArray2[2]}
+						{answerArray[2]}
 					</button>
 
 					<button 
 						className = 'bg-white dib br3 ba bw1 pa3 ma2 grow' 
 						onClick = 	{ () =>
 										{
-											if (this.state.questionArray[this.state.index].correct_answer ===  this.state.answerArray2[3])
+											if (this.state.questionArray[this.state.index].correct_answer ===  answerArray[3])
 											{
 												this.setState({
 													correctCount: this.state.correctCount +1
@@ -155,13 +156,12 @@ this.answerArray = [
 											this.setState({
 											 	index : this.state.index+1
 											})
-this.answerArray = [this.state.questionArray[this.state.index].correct_answer,this.state.questionArray[this.state.index].incorrect_answers[0],this.state.questionArray[this.state.index].incorrect_answers[1],this.state.questionArray[this.state.index].incorrect_answers[2]];
 
 											}
 										}
 									}		
 					>
-						{this.state.answerArray2[3]}
+						{answerArray[3]}
 					</button><br/>
 
 

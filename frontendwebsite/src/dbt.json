@@ -11,9 +11,42 @@
 		"category":"Entertainment: maskharebazi",
 		"type":"multiple",
 		"difficulty":"very difficult",
-		"question":"is sarmen khar?",
+		"question":"is sarmen smart?",
 		"correct_answer":"yes",
 		"incorrect_answers":["maybe","probably","couldbe"]
+	},
+	{	
+		"category":"Entertainment: revenge",
+		"type":"multiple",
+		"difficulty":"very easy",
+		"question":"is varujan smart?",
+		"correct_answer":"yes",
+		"incorrect_answers":["for sure","definetly","100%"]
+	},
+	{	
+		"category":"Entertainment: koskholy",
+		"type":"multiple",
+		"difficulty":"very medium",
+		"question":"is sean smart?",
+		"correct_answer":"yes",
+		"incorrect_answers":["4","5","6%"]
+	},
+	{	
+		"category":"Entertainment: smart",
+		"type":"multiple",
+		"difficulty":"very hard",
+		"question":"is masis smart?",
+		"correct_answer":"yes",
+		"incorrect_answers":["1","2","3%"]
+	},
+	{	
+		"category":"Entertainment: kos nagu",
+		"type":"multiple",
+		"difficulty":"very kiri",
+		"question":"is john smart?",
+		"correct_answer":"yes",
+		"incorrect_answers":["6","7","8%"]
 	}
+
 ]
 
