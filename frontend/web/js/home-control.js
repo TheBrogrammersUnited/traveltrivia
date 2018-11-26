@@ -1,5 +1,4 @@
 /* facebook logging in and out */
-var serverAddress = "https://18.188.247.247:9000";
 var currentFacebookId = "";
 
 window.fbAsyncInit = function() 
@@ -22,6 +21,17 @@ window.fbAsyncInit = function()
     });   
       
  };
+
+$(document).ready(function(){
+
+    $("#logoutButton").click(function(){
+    	onLoggedOut();
+    });
+    $("#statsButton").click(function(){
+    	window.open ('http://app.traveltrivia.fun','_parent',false);
+    });
+
+});
 
 function statusChangeCallback(r)
 {
@@ -46,8 +56,14 @@ function onLoggedIn()
 	    console.log(JSON.stringify(response));
 	    welcomeParagraph.innerText = "Welcome " + response.name + "!";
 	    currentFacebookId = response.id;
-	    getCorrect();
-		getTotal();
+	    var baseDomain = '.traveltrivia.fun',
+		expireAfter = new Date();
+		//setting up  cookie expire date after a week
+		expireAfter.setDate(expireAfter.getDate() + 7);
+		//now setup cookie
+		document.cookie="Data={\"name\":\"" + response.name + "\", \"id\":\"" + response.id + "\"}; domain=" + baseDomain + "; expires=" + expireAfter + "; path=/";
+
+	    
 	});
 
 	document.getElementById("logInDiv").style.display = "none";
@@ -55,24 +71,16 @@ function onLoggedIn()
 
 
 }
-
 function onLoggedOut()
 {
+	var welcomeParagraph = document.getElementById("welcome");
+	
+
 	document.getElementById("logInDiv").style.display = "block";
 	document.getElementById("loggedInDiv").style.display = "none";
 	FB.logout();
+	document.cookie="Data=";
 }
-
-function submit()
-{
-	print("test");
-}
-$(document).ready(function(){
-
-    $("#logoutButton").click(function(){
-    	onLoggedOut();
-    });
-});
 
 
 (function(d, s, id)
@@ -84,75 +92,3 @@ $(document).ready(function(){
  fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
-
-
-/* travel trivia server communication */
-function getCorrect() {
-	var requestStr = "get-correct/" + currentFacebookId;
-	var urlStr = serverAddress + "/" + requestStr;
-	console.log("trying: " + urlStr);
-	$.ajax(
-			{
-				type : "GET",
-				url  : urlStr,
-				data : {
-				},
-				success : function(result) {
-					var scoreTxt=document.getElementById("correctText");
-					scoreTxt.innerText = "Your have gotten " + result.correct + " answers correct.";
-					$('#errorMessage').text("");
-					//
-				},
-				error: function (jqXHR, exception, err) {
-					$('#errorMessage').text("Failed to access TravelTrivia server: " + exception +", " + err);
-				}
-			});
-}
-function getTotal() {
-	var requestStr = "get-total/" + currentFacebookId;
-	var urlStr = serverAddress + "/" + requestStr;
-	console.log("trying: " + urlStr);
-	$.ajax(
-			{
-				type : "GET",
-				url  : urlStr,
-				data : {
-				},
-				success : function(result) {
-					var scoreTxt=document.getElementById("totalText");
-					scoreTxt.innerText = "Your have attempted " + result.total + " questions in total.";
-					$('#errorMessage').text("");
-					//
-				},
-				error: function (jqXHR, exception, err) {
-					$('#errorMessage').text("Failed to access TravelTrivia server: " + exception +", " + err);
-				}
-			});
-}
-
-/*this is just an example POST request, unused */
-function setXml(xmlStr) {
-	if (xmlStr) {
-		var str = "debug";
-		if(live == 1) {
-			str = "live";
-		}
-		$.ajax(
-				{
-					type : "POST",
-					url  : "/dl_" + xmlType + "/newXml",
-					data : {
-						"newXml" : xmlStr,
-						"live" : live
-					},
-					success : function(result) {
-						location.reload();
-					},
-					error: function (jqXHR, exception) {
-						alert("Failed to send xml file.");
-					}
-				});
-	} else {
-		alert("Invalid xml string");
-	}
-}
