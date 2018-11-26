@@ -24,10 +24,10 @@ window.fbAsyncInit = function()
 
 $(document).ready(function(){
 
-    $("#logoutButton").click(function(){
+    $("#logoutbutton").click(function(){
     	onLoggedOut();
     });
-    $("#statsButton").click(function(){
+    $("#statsbutton").click(function(){
     	window.open ('http://app.traveltrivia.fun','_parent',false);
     });
 
