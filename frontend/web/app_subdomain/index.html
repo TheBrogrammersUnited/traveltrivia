@@ -67,7 +67,7 @@
       <div id="sidebar" class="nav-collapse ">
         <!-- sidebar menu start-->
         <ul class="sidebar-menu" id="nav-accordion">
-          <p class="centered"><a href="profile.html"><img src="img/ui-default.jpg" class="img-circle" width="80"></a></p>
+          <p class="centered"><a href="profile.html"><img id="profilePic" src="img/ui-default.jpg" class="img-circle" width="80"></a></p>
           <h5 class="centered" id="fbname">Your Name</h5>
           <li class="mt">
             <a class="active" href="index.html">
@@ -87,16 +87,18 @@
     <section id="main-content">
       <section class="wrapper">
         <div class="row">
-          <div class="col-lg-9 main-chart">
+          <div class="col-lg-12 main-chart">
             <!--CUSTOM CHART START -->
             <div class="border-head">
-              <img class="img-fluid" src="img/logo.png" alt="Travel Trivia" width="10%">
+              <img class="img-fluid" src="img/logo.png" alt="Travel Trivia" width="7%">
               <h3>USER DASHBOARD</h3>
 
             </div>
             <div class="content-panel">
+                <h4>Here are your most recent statistics.</h4>
                 <h4><i class="fa fa-angle-right"></i> Your Answers</h4>
                 <div class="panel-body text-center">
+
                   <canvas id="doughnut" height="300" width="400"></canvas>
                   <br/>
                   <h3 style="display:inline" id="percent">Test text</h3><h3 style="display:inline" >%</h3>
@@ -106,8 +108,44 @@
                   <p style="display:inline">Total answers: </p><p style="display:inline" id="totalText">Test text</p>
                 </div>
               </div>
+            </div>
+          </div>
             <!--custom chart end-->
-            
+            <div class="row">
+              <!-- TWITTER PANEL -->
+              <div class="col-md-4 mb">
+                <div class="twitter-panel pn">
+                  <i class="fa fa-twitter fa-4x"></i>
+                  <p>Thanks for playing TravelTrivia! Enjoy the app!</p>
+                  <p class="user">@TravelTrivia</p>
+                </div>
+              </div>
+              <!-- /col-md-4 -->
+              <!-- DIRECT MESSAGE PANEL -->
+              <div class="col-md-8 mb">
+                <div class="message-p pn">
+                  <div class="message-header">
+                    <h5>Notification</h5>
+                  </div>
+                  <br/>
+                  <div class="row">
+                    <div class="col-md-3 centered hidden-sm hidden-xs">
+                      <img src="img/ui-sean.jpg" class="img-circle" width="65">
+                    </div>
+                    <div class="col-md-9">
+                      <p>
+                        A message from co-founder 
+                        <name>Sean Castillo</name>.
+                      </p>
+                      <p class="small">3 hours ago</p>
+                      <p class="message">You can improve you score by practicing! The more questions you answer, the more you will learn.</p>
+                    </div>
+                  </div>
+                </div>
+                <!-- /Message Panel-->
+              </div>
+              <!-- /col-md-8  -->
+            </div>
             <!-- /row -->
            
            

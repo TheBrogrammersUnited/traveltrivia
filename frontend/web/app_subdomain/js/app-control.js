@@ -14,6 +14,9 @@ $(document).ready(function(){
     currentName = jsonObj.name;
     document.getElementById("fbname").innerText = currentName;
 	currentFacebookId = jsonObj.id;
+
+	var im = document.getElementById("profilePic").setAttribute("src", "http://graph.facebook.com/" + currentFacebookId + "/picture?type=normal");
+
 	getCorrect();
 	getTotal();
 });
