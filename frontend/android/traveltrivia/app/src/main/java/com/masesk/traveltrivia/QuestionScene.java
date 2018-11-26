@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -36,8 +37,10 @@ import org.scribe.model.Verb;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Queue;
 import edu.cmu.pocketsphinx.Assets;
 import edu.cmu.pocketsphinx.Hypothesis;
@@ -72,6 +75,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
     private boolean firstReq = true;
     private Question currQuestion;
     private Location location;
+    private Map map;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +89,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
         questionsAsked = Integer.parseInt(MainActivity.getTotal().trim());
         corrAnswers = Integer.parseInt(MainActivity.getCorrect().trim());
         exit = new Button(getApplicationContext());
-
+        map = new HashMap<String, String>();
         topbar = (TopBar) getFragmentManager().findFragmentById(R.id.fragment);
         lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         Location location;
@@ -117,8 +121,23 @@ public class QuestionScene extends Activity implements RecognitionListener {
             @Override
             public void onInit(int i) {
                 if (i == TextToSpeech.SUCCESS) {
+
+                    tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                        @Override
+                        public void onDone(String utteranceId) {
+                        }
+
+                        @Override
+                        public void onError(String utteranceId) {
+                        }
+
+                        @Override
+                        public void onStart(String utteranceId) {
+                        }
+                    });
                     int result = tts.setLanguage(Locale.getDefault());
                     setUpQuestion();
+
                 }
                 else if (i == TextToSpeech.ERROR) {
                     Toast.makeText(getApplicationContext(), "Error occurred while initializing Text-To-Speech engine", Toast.LENGTH_LONG).show();
@@ -239,8 +258,13 @@ public class QuestionScene extends Activity implements RecognitionListener {
                             PackageManager.PERMISSION_GRANTED && Math.random() > 0.88) {
 
 
-                 location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                 new LocationQuestion().execute(location.getLatitude()+"&"+location.getLongitude());
+                location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if(location == null){
+                    location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                }
+                if(location != null) {
+                    new LocationQuestion().execute(location.getLatitude() + "&" + location.getLongitude());
+                }
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
 
@@ -256,6 +280,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
                 currQuestion = questions.remove();
            }
         }
+
     }
 
     public void setButtonsEnabled(boolean st){
@@ -391,6 +416,15 @@ public class QuestionScene extends Activity implements RecognitionListener {
             ttsSpeak(currQuestion.getAnswers()[i], TextToSpeech.QUEUE_ADD);
             answerButtons[i].setText(currQuestion.getAnswers()[i]);
         }
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                while(tts.isSpeaking()){
+
+                }
+                recognizer.startListening("listen");
+            }
+        }, 0);
+
     }
 
     public void switchToError(){
@@ -405,8 +439,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
                 setButtonsEnabled(true);
                 changedButton.setBackgroundResource(R.drawable.button);
                 if(recognizer != null) {
-                    recognizer.stop();
-                    recognizer.startListening("listen");
+                    recognizer.cancel();
                 }
                 stopListening = false;
                 setUpQuestion();
@@ -422,6 +455,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
         new updateInfo().execute();
         tts.stop();
     }
+
 
     /************************************************************************************
      *
@@ -474,7 +508,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
             if (result != null) {
                 switchToError();
             } else {
-                recognizer.startListening("listen", 1000);
+                //recognizer.startListening("listen", 1000);
             }
         }
     }
@@ -513,8 +547,8 @@ public class QuestionScene extends Activity implements RecognitionListener {
 
     @Override
     public void onEndOfSpeech() {
-        recognizer.stop();
-        recognizer.startListening("listen");
+        //recognizer.cancel();
+        //recognizer.startListening("listen");
     }
 
     @Override
@@ -522,24 +556,36 @@ public class QuestionScene extends Activity implements RecognitionListener {
         if (hypothesis == null)
             return;
         String text = hypothesis.getHypstr();
-        if(text.equals("listen")){
-            recognizer.stop();
-            recognizer.startListening("options");
+        if(recognizer.getSearchName().equals("listen")){
+            if(text.equals("listen")){
+                recognizer.cancel();
+                ttsSpeak("listening", TextToSpeech.QUEUE_FLUSH);
+                setButtonsEnabled(false);
+                new Handler().postDelayed(new Runnable() {
+                    public void run() {
+                        while(tts.isSpeaking()){
+
+                        }
+                        recognizer.startListening("options");
+                    }
+                }, 10);
+            }
+        }
+        else if(recognizer.getSearchName().equals("options")){
+            if(handleOptionUsingVR(text)){
+                recognizer.cancel();
+            }
         }
     }
 
     @Override
     public void onResult(Hypothesis hypothesis) {
-        if (hypothesis != null) {
-            String text = hypothesis.getHypstr();
-            handleOptionUsingVR(text);
-            //recognizer.stop();
-            if(!stopListening) {
-                ttsSpeak("listening", TextToSpeech.QUEUE_FLUSH);
-                setButtonsEnabled(false);
-                recognizer.stop();
-                recognizer.startListening("options");
-            }
+        String text = hypothesis.getHypstr();
+        if(recognizer.getSearchName().equals("listen")){
+            recognizer.cancel();
+        }
+        else if(recognizer.getSearchName().equals("options")){
+            recognizer.cancel();
         }
     }
 
@@ -550,30 +596,30 @@ public class QuestionScene extends Activity implements RecognitionListener {
 
     @Override
     public void onTimeout() {
-        recognizer.stop();
+        //recognizer.cancel();
         recognizer.startListening("listen");
     }
 
-    public void handleOptionUsingVR(String option){
+    public boolean handleOptionUsingVR(String option){
             if(!option.equals("listen")){
-                recognizer.stop();
                 stopListening = true;
                 switch (option){
                     case "ay":
                         setAnswerUsingVR(0);
-                        break;
+                        return true;
                     case "bee":
                         setAnswerUsingVR(1);
-                        break;
+                        return true;
                     case "see":
                         setAnswerUsingVR(2);
-                        break;
+                        return true;
                     case "dee":
                         setAnswerUsingVR(3);
-                        break;
+                        return true;
                 }
 
             }
+            return false;
     }
 
 
@@ -607,7 +653,12 @@ public class QuestionScene extends Activity implements RecognitionListener {
 
 
             location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            new LocationQuestion().execute(location.getLatitude()+"&"+location.getLongitude());
+            if(location == null){
+                location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            }
+            if(location != null) {
+                new LocationQuestion().execute(location.getLatitude() + "&" + location.getLongitude());
+            }
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
 
@@ -628,9 +679,11 @@ public class QuestionScene extends Activity implements RecognitionListener {
         //speakType speaks only that word is TextToSpeeh.QUEUE_FLUSH
         //and Stacks them if TextToSpeech.QUEUE_ADD
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            tts.speak(input,speakType,null,null);
+            map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,"messageID");
+            String utteranceId=this.hashCode() + "";
+            tts.speak(input,speakType,null,utteranceId);
         } else {
-            tts.speak(input, speakType, null);
+            tts.speak(input, speakType, (HashMap)map);
         }
     }
 
