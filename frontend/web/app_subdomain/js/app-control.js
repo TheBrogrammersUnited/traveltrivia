@@ -2,7 +2,8 @@
 var serverAddress = "https://cors.io/?http://18.188.247.247:9000";
 var currentFacebookId = "";
 var currentName = "";
-
+var correct = -2;
+var total = -2;
 $(document).ready(function(){
 
     $("#acctButton").click(function(){
@@ -11,12 +12,30 @@ $(document).ready(function(){
     var decodedCookie = decodeURIComponent(document.cookie).split("=")[1];
     var jsonObj = JSON.parse(decodedCookie);
     currentName = jsonObj.name;
+    document.getElementById("fbname").innerText = currentName;
 	currentFacebookId = jsonObj.id;
 	getCorrect();
 	getTotal();
-
 });
 
+function onGetCorrectOrTotal()
+{
+	if(correct != -2 && total != -2)
+	{
+		document.getElementById("percent").innerText = ((correct/total)*100).toFixed(0);
+		var doughnutData = [
+	        {
+	            value: parseInt(correct),
+	            color:"#2ecc71"
+	        },
+	        {
+	            value : parseInt(total),
+	            color : "#CC2E89"
+	        }
+	    ];
+		new Chart(document.getElementById("doughnut").getContext("2d")).Doughnut(doughnutData);
+	}
+}
 
 
 /* travel trivia server communication */
@@ -34,8 +53,11 @@ function getCorrect() {
 				success : function(result) {
 					var scoreTxt=document.getElementById("correctText");
 					//var resultObj = JSON.parse(result);
-					scoreTxt.innerText = "You have gotten " + result.correct + " answers correct.";
+					scoreTxt.innerText =  result.correct;
 					$('#errorMessage').text("");
+					
+					correct = result.correct;
+					onGetCorrectOrTotal();
 					//
 				},
 				error: function (jqXHR, exception, err) {
@@ -57,8 +79,11 @@ function getTotal() {
 				success : function(result) {
 					var scoreTxt=document.getElementById("totalText");
 					//var resultObj = JSON.parse(result);
-					scoreTxt.innerText = "You have attempted " + result.total + " questions in total.";
+					scoreTxt.innerText = result.total;
 					$('#errorMessage').text("");
+					
+					total = result.total;
+					onGetCorrectOrTotal();
 					//
 				},
 				error: function (jqXHR, exception, err) {
