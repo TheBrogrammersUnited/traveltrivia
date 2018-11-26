@@ -3,6 +3,7 @@ height: 100%;
 background-position: center;
 background-repeat: no-repeat;
 background-size: cover;
+
 background: rgba(42,99,60,1) no-repeat center center fixed;
 background: -moz-linear-gradient(top, rgba(42,99,60,1) 0%, rgba(93,160,120,1) 100%) no-repeat center center fixed;
 background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(42,99,60,1)), color-stop(100%, rgba(93,160,120,1))) no-repeat center center fixed;
@@ -23,6 +24,43 @@ label{
 	font-family: 'Roboto Condensed', sans-serif;
 	font-size: 20px;
 	color: white;
+}
+
+/*
+Trying to add a 2s fading animation for the "Welcome user!" display..
+*/
+
+#welcome {
+  animation: bottomFadeOut 0s 2s forwards;
+  visibility: visible;
+  opacity: 1;
+    
+}
+
+@keyframes bottomFadeOut {
+  0% {
+    position: absolute;
+    bottom: -5rem;
+    opacity: 0;
+  }
+
+  75% {
+    position: absolute;
+    bottom: 25%;
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+  
+}
+
+
+
+
+#loggedInDiv{
+    display: none;
 }
 
 
