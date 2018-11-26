@@ -34,7 +34,7 @@ function getCorrect() {
 				success : function(result) {
 					var scoreTxt=document.getElementById("correctText");
 					//var resultObj = JSON.parse(result);
-					scoreTxt.innerText = "Your have gotten " + result.correct + " answers correct.";
+					scoreTxt.innerText = "You have gotten " + result.correct + " answers correct.";
 					$('#errorMessage').text("");
 					//
 				},
@@ -57,7 +57,7 @@ function getTotal() {
 				success : function(result) {
 					var scoreTxt=document.getElementById("totalText");
 					//var resultObj = JSON.parse(result);
-					scoreTxt.innerText = "Your have attempted " + result.total + " questions in total.";
+					scoreTxt.innerText = "You have attempted " + result.total + " questions in total.";
 					$('#errorMessage').text("");
 					//
 				},
