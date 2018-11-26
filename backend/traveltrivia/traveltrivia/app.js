@@ -68,7 +68,7 @@ app.get('/get-location-question/:la&:lo', function (req, res) {
                 difficulty: 'none',
                 question: 'How far is ' + body.response.venues[index].name + ' from your current location?',
                 correct_answer: dist.toFixed(2),
-                incorrect_answer: [incorrect[0].toFixed(2), incorrect[1].toFixed(2), incorrect[2].toFixed(2)]
+                incorrect_answers: [incorrect[0].toFixed(2), incorrect[1].toFixed(2), incorrect[2].toFixed(2)]
             };
             o[key].push(data);
             //console.log(JSON.stringify(o));
@@ -244,17 +244,17 @@ app.get('/find-user/:id', function (req, res) {
     });
 });
 
+// this doesnt work... but we need to get it working at some point
 app.use(function(req, res, next) {
 	res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	next();
 });
-
+//
 
 var server = app.listen(port, function () {
   console.log("We have started our server on port 9000");	
 });
-
 
 function distance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;
@@ -269,7 +269,6 @@ function distance(lat1, lon1, lat2, lon2) {
 function kmToMiles(distInKm) {
     return 0.6213712 * distInKm;
 }
-
 
 process.on('uncaughtException', UncaughtExceptionHandler);
 
