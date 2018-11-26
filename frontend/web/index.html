@@ -1,20 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="index.css">
 <link rel="stylesheet" type="text/css" href="login.css">
+<!-- jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="js/home-control.js"></script>
+<!-- Popper JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
 <title>Travel Trivia</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> 
+
+<style type="text/css">
+
+
+
+.blockquote {
+	<!--background: black; -->
+	background-color: #eee
+	color: #66a;
+}
+
+.blockquote-footer {
+color: black;
+font-style: italic;
+}
+
+
+.bottom-navbar {
+    text-align: center;
+    position:fixed;
+    bottom: 0
+    background-color:#f00;
+    width:100%
+}
+
+
+</style>
+
+
 </head>
 
 <body>
 <div class ="logo">
-<img src="img/logo.png" alt="Car Trivia">
-<h2>Travel Trivia</h2>
-</div>
+<img src="img/ttrivia2.png" alt="LOGO" height = "120" width = "120">
+<h1 class = "display-4">Travel Trivia</h1>
+
 
 <div id="logInDiv">
 	<div id="fb-root"></div>
@@ -32,13 +72,36 @@
 </div>
 
 <div id="loggedInDiv">
-	<button id="logoutButton">Logout</button>
-	<button id="statsButton">My Stats</button>
+<button type="button" id = "logoutbutton" class="btn btn-danger">Logout</button>
+<button type="button" id = "statsbutton" class="btn btn-info">My Stats</button>
 	<p id="welcome"></p>
 	<p id="correctText"></p>
 	<p id="totalText"></p>
 	<p id="errorMessage"></p>
 </div>
 
+
+
+<!--<h6> Player Feedback </h6> -->
+<blockquote class="blockquote"><p>
+"Developed by world-class developers, Travel Trivia is the very first of its kind.."
+</p>
+<footer class="blockquote-footer">CNN</footer>
+</blockquote>
+<blockquote class="blockquote"><p>
+"An <em><strong>absolute</em></strong> must for CEOs that are always on the go."
+</p>
+<footer class="blockquote-footer">Bob Johnson</footer>
+</div>
+
+<br><br><br><br><br><br><br><br><br><br><br><br>
+
+<div class="bottom-navbar">
+This application was made by The Brogrammers™
+</div>
+
+
+
 </body>
 </html>
+
