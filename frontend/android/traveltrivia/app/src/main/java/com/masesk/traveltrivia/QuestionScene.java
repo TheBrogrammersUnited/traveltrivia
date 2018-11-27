@@ -76,6 +76,8 @@ public class QuestionScene extends Activity implements RecognitionListener {
     private Location location;
     private Map map;
     private boolean answerButtonPressed = false;
+    private Handler handler;
+    private Runnable runnable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +92,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
         corrAnswers = Integer.parseInt(MainActivity.getCorrect().trim());
         exit = new Button(getApplicationContext());
         map = new HashMap<String, String>();
+        handler = new Handler();
         topbar = (TopBar) getFragmentManager().findFragmentById(R.id.fragment);
         lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         Location location;
@@ -178,6 +181,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         tts.shutdown();
+                        handler.removeCallbacks(runnable);
                         if (recognizer != null) {
                             recognizer.cancel();
                             recognizer.shutdown();
@@ -401,7 +405,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
     }
 
     public void setUpQuestion(){
-        answerButtonPressed = false;
         question.setText(currQuestion.getQuestion());
         question.setTextSize(25);
         ttsSpeak(currQuestion.getQuestion(), TextToSpeech.QUEUE_ADD);
@@ -410,21 +413,22 @@ public class QuestionScene extends Activity implements RecognitionListener {
             ttsSpeak(currQuestion.getAnswers()[i], TextToSpeech.QUEUE_ADD);
             answerButtons[i].setText(currQuestion.getAnswers()[i]);
         }
-        new waitForVRAnswer().execute();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                // Insert custom code here
+
+                if(!tts.isSpeaking() && recognizer != null){
+                    recognizer.startListening("listen");
+                    handler.removeCallbacks(runnable);
+                }
+                handler.postDelayed(runnable, 500);
+            }
+        };
+        handler.post(runnable);
     }
 
-    public class waitForVRAnswer extends AsyncTask<Void, Void, Void>{
-        @Override
-        protected Void doInBackground(Void... voids) {
-            while(tts.isSpeaking()){
 
-            }
-            if(!answerButtonPressed) {
-                recognizer.startListening("listen");
-            }
-            return null;
-        }
-    }
     public void switchToError(){
         Intent myIntent = new Intent(qS, Error.class);
         qS.startActivity(myIntent);
@@ -506,7 +510,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
             if (result != null) {
                 switchToError();
             } else {
-                //recognizer.startListening("listen", 1000);
             }
         }
     }

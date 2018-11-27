@@ -81,13 +81,13 @@ public class MainActivity extends Activity  {
                     GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
                         @Override
                         public void onCompleted(JSONObject object, GraphResponse response) {
-                            try {
-                                URL profile_picture = new URL("https://graph.facebook.com/" + AccessToken.getCurrentAccessToken().getUserId() + "/picture?type=normal");
-                                Picasso.get().load(profile_picture.toString()).into(profilePic);
-
-                            }catch (MalformedURLException e){
-
-                            }
+//                            try {
+//                                URL profile_picture = new URL("https://graph.facebook.com/" + AccessToken.getCurrentAccessToken().getUserId() + "/picture?type=normal");
+//                                Picasso.get().load(profile_picture.toString()).into(profilePic);
+//
+//                            }catch (MalformedURLException e){
+//
+//                            }
                         }
                     });
                     Bundle parameters = new Bundle();
