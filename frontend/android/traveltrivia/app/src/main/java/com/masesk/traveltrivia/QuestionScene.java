@@ -76,6 +76,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
     private Question currQuestion;
     private Location location;
     private Map map;
+    private int counter = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,6 +118,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
         exit.setText("QUIT");
         exit.setBackgroundResource(R.drawable.button);
         answeredView.setBackgroundResource(R.drawable.button_correct);
+
         tts= new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int i) {
@@ -125,6 +127,17 @@ public class QuestionScene extends Activity implements RecognitionListener {
                     tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
                         @Override
                         public void onDone(String utteranceId) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    counter++;
+                                    if(counter == 9){
+                                        counter = 0;
+                                        recognizer.startListening("listen");
+                                    }
+                                }
+                            });
+
                         }
 
                         @Override
@@ -255,7 +268,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
             if (ContextCompat.checkSelfPermission(QuestionScene.this, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
                     PackageManager.PERMISSION_GRANTED &&
                     ContextCompat.checkSelfPermission(QuestionScene.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
-                            PackageManager.PERMISSION_GRANTED && Math.random() > 0.88) {
+                            PackageManager.PERMISSION_GRANTED && Math.random() > 0.22) {
 
 
                 location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -288,6 +301,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
             answerButtons[i].setEnabled(st);
         }
     }
+
 
 
 
@@ -416,15 +430,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
             ttsSpeak(currQuestion.getAnswers()[i], TextToSpeech.QUEUE_ADD);
             answerButtons[i].setText(currQuestion.getAnswers()[i]);
         }
-        new Handler().postDelayed(new Runnable() {
-            public void run() {
-                while(tts.isSpeaking()){
-
-                }
-                recognizer.startListening("listen");
-            }
-        }, 10);
-
     }
 
     public void switchToError(){
@@ -676,10 +681,12 @@ public class QuestionScene extends Activity implements RecognitionListener {
         //speakType speaks only that word is TextToSpeeh.QUEUE_FLUSH
         //and Stacks them if TextToSpeech.QUEUE_ADD
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,"messageID");
+            Bundle params = new Bundle();
+            params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, input);
             String utteranceId=this.hashCode() + "";
-            tts.speak(input,speakType,null,utteranceId);
+            tts.speak(input,speakType,params,utteranceId);
         } else {
+            map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,input);
             tts.speak(input, speakType, (HashMap)map);
         }
     }
