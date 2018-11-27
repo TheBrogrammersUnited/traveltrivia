@@ -77,7 +77,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
     private Location location;
     private Map map;
     private int counter = 0;
-    private boolean readyToRead = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,6 +127,16 @@ public class QuestionScene extends Activity implements RecognitionListener {
                     tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
                         @Override
                         public void onDone(String utteranceId) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    counter++;
+                                    if(counter == 5){
+                                        counter = 0;
+                                        recognizer.startListening("listen");
+                                    }
+                                }
+                            });
 
                         }
 
@@ -293,21 +302,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
         }
     }
 
-    public class StartExec extends AsyncTask<Void, Void, Boolean>{
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            while(tts.isSpeaking()){
-
-            }
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean s) {
-            super.onPostExecute(s);
-            recognizer.startListening("listen");
-        }
-    }
 
 
 
@@ -436,7 +430,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
             ttsSpeak(currQuestion.getAnswers()[i], TextToSpeech.QUEUE_ADD);
             answerButtons[i].setText(currQuestion.getAnswers()[i]);
         }
-        new StartExec().execute();
     }
 
     public void switchToError(){
