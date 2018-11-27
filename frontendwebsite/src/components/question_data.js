@@ -6,7 +6,6 @@ class questionData extends Component{
 		super(props);
 		let index=0;
 		let questionArray = [];
-		// let answerArray = [];
 
 		props.questionData.map((props) => {
 			questionArray.push(props);
@@ -19,7 +18,6 @@ class questionData extends Component{
 			index: index,
 			correctCount: 0,
 			incorrectCount: 0,
-			// answerArray2 : answerArray[index],
 			correctAnswer :props.correctAnswer
 		}
 		
@@ -49,11 +47,11 @@ class questionData extends Component{
 										this.state.questionArray[this.state.index].incorrect_answers[2]]);
 		return(
 			<div>
-				<div className = 'bg-white helvetica dib br4 ba bw1 pa3 ma2'>
+				<div className = 'bg-white helvetica w-30 dib br4 ba bw1 pa3 ma2'>
 					Category:  <br/> 
 					{this.state.questionArray[this.state.index].category}
 				</div>
-				<div className = 'bg-white dib br4 ba bw1 pa3 ma2'>
+				<div className = 'bg-white w-10 dib br4 ba bw1 pa3 ma2'>
 					Difficulty: <br/> {this.state.questionArray[this.state.index].difficulty}
 					
 				</div><br/>
@@ -158,10 +156,6 @@ class questionData extends Component{
 						{answerArray[3]}
 					</button><br/>
 
-
-					
-
-					
 					<div className = 'bg-dark-green w-20 dib br-pill ba bw1 pa3 ma2 '>
 						{this.state.correctCount}
 					</div>
@@ -169,8 +163,6 @@ class questionData extends Component{
 						{this.state.incorrectCount}
 					</div>
 			</div>
-					// <NewsItem key = {questionArray[props.index].category} item={questionArray[props.index]} index = {index}>
-					// </NewsItem>
 				
 		)
 	}
