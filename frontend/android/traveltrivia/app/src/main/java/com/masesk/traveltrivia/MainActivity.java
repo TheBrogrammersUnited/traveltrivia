@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -14,7 +15,12 @@ import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONObject;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 public class MainActivity extends Activity  {
@@ -31,6 +37,8 @@ public class MainActivity extends Activity  {
     private LinearLayout loadingLayout;
     private ProgressBar progressBar;
     private Button logoutFb;
+    private static ImageView profilePic;
+    private TopBar topbar;
     private static LoginReady loginReady = new LoginReady();
     @Override
     public void onCreate(Bundle state) {
@@ -44,6 +52,7 @@ public class MainActivity extends Activity  {
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
         startPlaying = new Button(getApplicationContext());
         logout = new Button(getApplicationContext());
+        topbar = (TopBar) getFragmentManager().findFragmentById(R.id.fragment);
         mainLayout.addView(startPlaying);
         mainLayout.addView(logout);
         loginReady.setListener(new LoginReady.ChangeListener() {
@@ -54,6 +63,7 @@ public class MainActivity extends Activity  {
                 mainLayout.setBackgroundResource(R.drawable.background);
                 winLossScore = (TextView)findViewById(R.id.score);
                 usernameField = (TextView)findViewById(R.id.username);
+                profilePic = (ImageView)findViewById(R.id.profilePic);
                 startPlaying.setText("Start Playing");
                 startPlaying.setBackgroundResource(R.drawable.button);
                 logout.setBackgroundResource(R.drawable.button);
@@ -73,7 +83,14 @@ public class MainActivity extends Activity  {
                     GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
                         @Override
                         public void onCompleted(JSONObject object, GraphResponse response) {
+                            try {
+                                URL profile_picture = new URL("https://graph.facebook.com/" + AccessToken.getCurrentAccessToken().getUserId() + "/picture?type=normal");
+                                Picasso.get().load(profile_picture.toString()).into(profilePic);
+                                topbar.setProfilePicture(profilePic);
 
+                            }catch (MalformedURLException e){
+
+                            }
                         }
                     });
                     Bundle parameters = new Bundle();

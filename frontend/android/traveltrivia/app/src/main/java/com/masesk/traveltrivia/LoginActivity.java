@@ -14,12 +14,16 @@ import com.facebook.FacebookException;
 import com.facebook.Profile;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.scribe.model.Request;
 import org.scribe.model.Response;
 import org.scribe.model.Verb;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 
 public class LoginActivity extends Activity {
