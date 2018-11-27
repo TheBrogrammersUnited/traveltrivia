@@ -37,8 +37,7 @@ public class MainActivity extends Activity  {
     private LinearLayout loadingLayout;
     private ProgressBar progressBar;
     private Button logoutFb;
-    private static ImageView profilePic;
-    private TopBar topbar;
+    private ImageView profilePic;
     private static LoginReady loginReady = new LoginReady();
     @Override
     public void onCreate(Bundle state) {
@@ -52,7 +51,6 @@ public class MainActivity extends Activity  {
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
         startPlaying = new Button(getApplicationContext());
         logout = new Button(getApplicationContext());
-        topbar = (TopBar) getFragmentManager().findFragmentById(R.id.fragment);
         mainLayout.addView(startPlaying);
         mainLayout.addView(logout);
         loginReady.setListener(new LoginReady.ChangeListener() {
@@ -86,7 +84,6 @@ public class MainActivity extends Activity  {
                             try {
                                 URL profile_picture = new URL("https://graph.facebook.com/" + AccessToken.getCurrentAccessToken().getUserId() + "/picture?type=normal");
                                 Picasso.get().load(profile_picture.toString()).into(profilePic);
-                                topbar.setProfilePicture(profilePic);
 
                             }catch (MalformedURLException e){
 

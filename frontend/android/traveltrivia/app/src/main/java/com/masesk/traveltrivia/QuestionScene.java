@@ -54,7 +54,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
     private TextView answeredView;
     private TextView incorrectView;
     private Queue<Question> questions;
-    private Question locationQuestion;
     private Activity qS = this;
     private SpeechRecognizer recognizer;
     private Button []answerButtons = new Button[4];
@@ -76,7 +75,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
     private Question currQuestion;
     private Location location;
     private Map map;
-    private int counter = 0;
+    private boolean answerButtonPressed = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,30 +123,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
             public void onInit(int i) {
                 if (i == TextToSpeech.SUCCESS) {
 
-                    tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-                        @Override
-                        public void onDone(String utteranceId) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    counter++;
-                                    if(counter == 9){
-                                        counter = 0;
-                                        recognizer.startListening("listen");
-                                    }
-                                }
-                            });
-
-                        }
-
-                        @Override
-                        public void onError(String utteranceId) {
-                        }
-
-                        @Override
-                        public void onStart(String utteranceId) {
-                        }
-                    });
                     int result = tts.setLanguage(Locale.getDefault());
                     setUpQuestion();
 
@@ -242,6 +217,10 @@ public class QuestionScene extends Activity implements RecognitionListener {
     public class AnswerHandler implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            answerButtonPressed = true;
+            if(recognizer != null){
+                recognizer.cancel();
+            }
             questionsAsked++;
             setButtonsEnabled(false);
             if(currQuestion.checkCorrectAnswer(((Button)view).getText().toString())){
@@ -422,6 +401,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
     }
 
     public void setUpQuestion(){
+        answerButtonPressed = false;
         question.setText(currQuestion.getQuestion());
         question.setTextSize(25);
         ttsSpeak(currQuestion.getQuestion(), TextToSpeech.QUEUE_ADD);
@@ -430,8 +410,21 @@ public class QuestionScene extends Activity implements RecognitionListener {
             ttsSpeak(currQuestion.getAnswers()[i], TextToSpeech.QUEUE_ADD);
             answerButtons[i].setText(currQuestion.getAnswers()[i]);
         }
+        new waitForVRAnswer().execute();
     }
 
+    public class waitForVRAnswer extends AsyncTask<Void, Void, Void>{
+        @Override
+        protected Void doInBackground(Void... voids) {
+            while(tts.isSpeaking()){
+
+            }
+            if(!answerButtonPressed) {
+                recognizer.startListening("listen");
+            }
+            return null;
+        }
+    }
     public void switchToError(){
         Intent myIntent = new Intent(qS, Error.class);
         qS.startActivity(myIntent);
@@ -599,7 +592,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
     @Override
     public void onTimeout() {
         //recognizer.cancel();
-        recognizer.startListening("listen");
+        //recognizer.startListening("listen");
     }
 
     public boolean handleOptionUsingVR(String option){

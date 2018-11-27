@@ -23,7 +23,7 @@ public class TopBar extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.top_bar, container, false);
-        profilePic = (ImageView)rootView.findViewById(R.id.profilePic);
+        profilePic =(ImageView)getActivity().findViewById(R.id.profilePic);
         username = (TextView)rootView.findViewById(R.id.username);
         score = (TextView)rootView.findViewById(R.id.score);
         coins = (TextView)rootView.findViewById(R.id.coins);
@@ -38,8 +38,5 @@ public class TopBar extends Fragment {
         MainActivity.setScore(correct, total);
     }
 
-    public void setProfilePicture(ImageView v){
-        profilePic = v;
-    }
 
 }
