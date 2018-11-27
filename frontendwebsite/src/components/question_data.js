@@ -57,13 +57,13 @@ class questionData extends Component{
 					Difficulty: <br/> {this.state.questionArray[this.state.index].difficulty}
 					
 				</div><br/>
-				<div className = 'bg-white w-third dib br4 ba bw1 pa3 ma2'>
+				<div className = 'bg-white w-40 dib br4 ba bw1 pa3 ma2'>
 					{this.state.questionArray[this.state.index].question}
 				</div><br/>
 			
 				
 					<button
-						className = 'bg-white dib br3 ba bw1 pa3 ma2 grow' 
+						className = 'bg-white  w-40 dib br3 ba bw1 pa3 ma2 grow' 
 						onClick ={ () =>
 										{
 											if (this.state.questionArray[this.state.index].correct_answer  ===  answerArray[0])
@@ -87,7 +87,7 @@ class questionData extends Component{
 					</button><br/>
 
 					<button 
-						className = 'bg-white dib br3 ba bw1 pa3 ma2 grow' 
+						className = 'bg-white  w-40 dib br3 ba bw1 pa3 ma2 grow' 
 						onClick = 	{ () =>
 										{
 											if (this.state.questionArray[this.state.index].correct_answer  ===  answerArray[1])
@@ -110,7 +110,7 @@ class questionData extends Component{
 					</button><br/>
 
 					<button 
-						className = 'bg-white dib br3 ba bw1 pa3 ma2 grow' 
+						className = 'bg-white w-40 dib br3 ba bw1 pa3 ma2 grow' 
 						onClick = 	{ () =>
 										{
 											if (this.state.questionArray[this.state.index].correct_answer  ===  answerArray[2])
@@ -135,7 +135,7 @@ class questionData extends Component{
 					</button><br/>
 
 					<button 
-						className = 'bg-white dib br3 ba bw1 pa3 ma2 grow' 
+						className = 'bg-white  w-40 dib br3 ba bw1 pa3 ma2 grow' 
 						onClick = 	{ () =>
 										{
 											if (this.state.questionArray[this.state.index].correct_answer ===  answerArray[3])
@@ -162,10 +162,10 @@ class questionData extends Component{
 					
 
 					
-					<div className = 'bg-dark-green dib br3 ba bw1 pa3 ma2 '>
+					<div className = 'bg-dark-green w-20 dib br3 ba bw1 pa3 ma2 '>
 						{this.state.correctCount}
 					</div>
-					<div className = 'bg-dark-red dib br3 ba bw1 pa3 ma2 '>
+					<div className = 'bg-dark-red  w-20 dib br3 ba bw1 pa3 ma2 '>
 						{this.state.incorrectCount}
 					</div>
 			</div>
