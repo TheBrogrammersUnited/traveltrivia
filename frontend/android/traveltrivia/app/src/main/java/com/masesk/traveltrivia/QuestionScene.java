@@ -131,7 +131,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
                                 @Override
                                 public void run() {
                                     counter++;
-                                    if(counter == 5){
+                                    if(counter == 9){
                                         counter = 0;
                                         recognizer.startListening("listen");
                                     }
@@ -682,11 +682,11 @@ public class QuestionScene extends Activity implements RecognitionListener {
         //and Stacks them if TextToSpeech.QUEUE_ADD
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Bundle params = new Bundle();
-            params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "");
+            params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, input);
             String utteranceId=this.hashCode() + "";
             tts.speak(input,speakType,params,utteranceId);
         } else {
-            map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,"messageID");
+            map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,input);
             tts.speak(input, speakType, (HashMap)map);
         }
     }
