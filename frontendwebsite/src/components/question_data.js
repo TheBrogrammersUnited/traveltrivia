@@ -47,15 +47,15 @@ class questionData extends Component{
 										this.state.questionArray[this.state.index].incorrect_answers[2]]);
 		return(
 			<div>
-				<div className = 'bg-white helvetica w-30 dib br4 ba bw1 pa3 ma2'>
+				<div className = 'bg-white b helvetica w-30 dib br4 ba bw1 pa3 ma2'>
 					Category:  <br/> 
 					{this.state.questionArray[this.state.index].category}
 				</div>
-				<div className = 'bg-white w-10 dib br4 ba bw1 pa3 ma2'>
+				<div className = 'bg-white b w-10 dib br4 ba bw1 pa3 ma2'>
 					Difficulty: <br/> {this.state.questionArray[this.state.index].difficulty}
 					
 				</div><br/>
-				<div className = 'bg-white w-40 dib br4 ba bw1 pa3 ma2'>
+				<div className = 'bg-white b br--bottom w-40 dib br4 ba bw1 pa3 ma2'>
 					{this.state.questionArray[this.state.index].question}
 				</div><br/>
 			
@@ -163,7 +163,7 @@ class questionData extends Component{
 						{this.state.incorrectCount}
 					</div><br/>
 					<button 
-						className = 'bg-white  w-40 dib br-pill ba bw1 pa3 ma2 grow'>
+						className = 'bg-white b--dark-red w-40 dib br-pill ba bw1 pa3 ma2 grow'>
 					Quit</button>
 			</div>
 				
