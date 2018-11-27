@@ -418,14 +418,15 @@ public class QuestionScene extends Activity implements RecognitionListener {
             public void run() {
                 // Insert custom code here
 
-                if(!tts.isSpeaking() && recognizer != null){
+                if(!tts.isSpeaking() && recognizer != null && !answerButtonPressed){
                     recognizer.startListening("listen");
                     handler.removeCallbacks(runnable);
                 }
-                handler.postDelayed(runnable, 500);
+                handler.postDelayed(runnable, 200);
             }
         };
         handler.post(runnable);
+        answerButtonPressed = false;
     }
 
 
