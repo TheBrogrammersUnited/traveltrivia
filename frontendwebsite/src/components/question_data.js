@@ -161,7 +161,10 @@ class questionData extends Component{
 					</div>
 					<div className = 'bg-dark-red  w-20 dib br-pill ba bw1 pa3 ma2 '>
 						{this.state.incorrectCount}
-					</div>
+					</div><br/>
+					<button 
+						className = 'bg-white  w-40 dib br-pill ba bw1 pa3 ma2 grow'>
+					Quit</button>
 			</div>
 				
 		)
