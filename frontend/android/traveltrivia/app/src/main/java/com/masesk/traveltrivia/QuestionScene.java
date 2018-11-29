@@ -221,12 +221,12 @@ public class QuestionScene extends Activity implements RecognitionListener {
     public class AnswerHandler implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            recognizer.cancel();
             answerButtonPressed = true;
-            if(recognizer != null){
-                recognizer.cancel();
-            }
             questionsAsked++;
             setButtonsEnabled(false);
+            exit.setEnabled(false);
+
             if(currQuestion.checkCorrectAnswer(((Button)view).getText().toString())){
                 ttsSpeak("Correct", TextToSpeech.QUEUE_FLUSH);
                 corrAnswers++;
@@ -251,7 +251,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
             if (ContextCompat.checkSelfPermission(QuestionScene.this, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
                     PackageManager.PERMISSION_GRANTED &&
                     ContextCompat.checkSelfPermission(QuestionScene.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
-                            PackageManager.PERMISSION_GRANTED && Math.random() > 0.22) {
+                            PackageManager.PERMISSION_GRANTED && Math.random() > 0.88) {
 
 
                 location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -417,16 +417,16 @@ public class QuestionScene extends Activity implements RecognitionListener {
             @Override
             public void run() {
                 // Insert custom code here
-
-                if(!tts.isSpeaking() && recognizer != null && !answerButtonPressed){
+                 if(!tts.isSpeaking() && recognizer != null){
                     recognizer.startListening("listen");
                     handler.removeCallbacks(runnable);
                 }
-                handler.postDelayed(runnable, 200);
+                else {
+                    handler.postDelayed(runnable, 200);
+                }
             }
         };
         handler.post(runnable);
-        answerButtonPressed = false;
     }
 
 
@@ -446,6 +446,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
                 }
                 stopListening = false;
                 setUpQuestion();
+                exit.setEnabled(true);
 
 
             }
@@ -563,11 +564,22 @@ public class QuestionScene extends Activity implements RecognitionListener {
                 recognizer.cancel();
                 ttsSpeak("listening", TextToSpeech.QUEUE_FLUSH);
                 setButtonsEnabled(false);
-                new Handler().postDelayed(new Runnable() {
+                exit.setEnabled(false);
+                runnable = new Runnable() {
+                    @Override
                     public void run() {
-                        recognizer.startListening("options");
+                        // Insert custom code here
+
+                        if(!tts.isSpeaking() && recognizer != null){
+                            recognizer.startListening("options");
+                            handler.removeCallbacks(runnable);
+                        }
+                        else {
+                            handler.postDelayed(runnable, 20);
+                        }
                     }
-                }, 200);
+                };
+                handler.post(runnable);
             }
         }
         else if(recognizer.getSearchName().equals("options")){
