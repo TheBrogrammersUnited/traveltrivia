@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,6 +78,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
     private Location location;
     private Map map;
     private boolean answerButtonPressed = false;
+    private ImageView profilePicture;
     private Handler handler;
     private Runnable runnable;
     @Override
@@ -90,6 +93,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
         answeredView = new TextView(getApplicationContext());
         questionsAsked = Integer.parseInt(MainActivity.getTotal().trim());
         corrAnswers = Integer.parseInt(MainActivity.getCorrect().trim());
+        profilePicture = (ImageView)findViewById(R.id.profilePic);
         exit = new Button(getApplicationContext());
         map = new HashMap<String, String>();
         handler = new Handler();
@@ -120,7 +124,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
         exit.setText("QUIT");
         exit.setBackgroundResource(R.drawable.button);
         answeredView.setBackgroundResource(R.drawable.button_correct);
-
         tts= new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int i) {
@@ -128,7 +131,7 @@ public class QuestionScene extends Activity implements RecognitionListener {
 
                     int result = tts.setLanguage(Locale.getDefault());
                     setUpQuestion();
-
+                    profilePicture.setImageBitmap(TopBar.getProfilePic());
                 }
                 else if (i == TextToSpeech.ERROR) {
                     Toast.makeText(getApplicationContext(), "Error occurred while initializing Text-To-Speech engine", Toast.LENGTH_LONG).show();
@@ -568,8 +571,6 @@ public class QuestionScene extends Activity implements RecognitionListener {
                 runnable = new Runnable() {
                     @Override
                     public void run() {
-                        // Insert custom code here
-
                         if(!tts.isSpeaking() && recognizer != null){
                             recognizer.startListening("options");
                             handler.removeCallbacks(runnable);
@@ -587,6 +588,11 @@ public class QuestionScene extends Activity implements RecognitionListener {
                 recognizer.cancel();
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        return;
     }
 
     @Override

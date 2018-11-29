@@ -1,6 +1,7 @@
 package com.masesk.traveltrivia;
 
 import android.app.Fragment;
+import android.graphics.Bitmap;
 import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ public class TopBar extends Fragment {
     private TextView score;
     private TextView coins;
     private ImageView profilePic;
+    private static Bitmap pic;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,6 +38,14 @@ public class TopBar extends Fragment {
     public void setInfo(String correct, String total){
         score.setText(correct + "/" + total);
         MainActivity.setScore(correct, total);
+    }
+
+    public static void setProfilePic(Bitmap pic){
+        TopBar.pic = pic;
+    }
+
+    public static Bitmap getProfilePic(){
+        return TopBar.pic;
     }
 
 

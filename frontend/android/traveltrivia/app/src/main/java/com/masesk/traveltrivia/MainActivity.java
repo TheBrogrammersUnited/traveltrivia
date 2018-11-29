@@ -3,6 +3,8 @@ package com.masesk.traveltrivia;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
@@ -11,11 +13,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONObject;
 
@@ -38,6 +43,7 @@ public class MainActivity extends Activity  {
     private ProgressBar progressBar;
     private Button logoutFb;
     private ImageView profilePic;
+    private Target mTarget;
     private static LoginReady loginReady = new LoginReady();
     @Override
     public void onCreate(Bundle state) {
@@ -53,6 +59,27 @@ public class MainActivity extends Activity  {
         logout = new Button(getApplicationContext());
         mainLayout.addView(startPlaying);
         mainLayout.addView(logout);
+
+        mTarget = new Target() {
+            @Override
+            public void onBitmapLoaded (final Bitmap bitmap, Picasso.LoadedFrom from){
+                //Do something
+                profilePic.setImageBitmap(bitmap);
+                TopBar.setProfilePic(bitmap);
+                profilePic.setImageBitmap(bitmap);
+            }
+
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+            }
+
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        };
+
         loginReady.setListener(new LoginReady.ChangeListener() {
             @Override
             public void onChange() {
@@ -81,19 +108,25 @@ public class MainActivity extends Activity  {
                     GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
                         @Override
                         public void onCompleted(JSONObject object, GraphResponse response) {
-//                            try {
-//                                URL profile_picture = new URL("https://graph.facebook.com/" + AccessToken.getCurrentAccessToken().getUserId() + "/picture?type=normal");
-//                                Picasso.get().load(profile_picture.toString()).into(profilePic);
-//
-//                            }catch (MalformedURLException e){
-//
-//                            }
+                            try {
+                                URL profile_picture = new URL("https://graph.facebook.com/" + AccessToken.getCurrentAccessToken().getUserId() + "/picture?type=normal");
+                                Picasso.get().load(profile_picture.toString()).into(mTarget);
+
+
+                            }catch (MalformedURLException e){
+
+                            }
                         }
                     });
                     Bundle parameters = new Bundle();
                     parameters.putString("fields", "id,email,birthday,friends");
                     request.setParameters(parameters);
-                    request.executeAsync();
+                    if(TopBar.getProfilePic() == null) {
+                        request.executeAsync();
+                    }
+                    else{
+                        profilePic.setImageBitmap(TopBar.getProfilePic());
+                    }
                 }
                 else{
                     logout();
@@ -130,7 +163,6 @@ public class MainActivity extends Activity  {
 
     }
 
-
     public static void setInfo(String id, String name, String correct, String total){
         MainActivity.id = id;
         MainActivity.name = name;
@@ -143,12 +175,22 @@ public class MainActivity extends Activity  {
     }
 
     public void logout(){
+        Picasso.get().cancelRequest(mTarget);
         LoginManager.getInstance().logOut();
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+    @Override
+    public void onBackPressed() {
 
+        return;
+    }
+    @Override
+    public void onPause(){
+        super.onPause();
+        Picasso.get().cancelRequest(mTarget);
+    }
     public static String getName(){
         return name;
     }
