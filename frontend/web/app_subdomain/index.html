@@ -7,11 +7,9 @@
   <meta name="description" content="">
   <meta name="author" content="Dashboard">
   <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
-  <title>Dashio - Bootstrap Admin Template</title>
+  <title>TravelTrivia User Dashboard</title>
 
   <!-- Favicons -->
-  <link href="img/favicon.png" rel="icon">
-  <link href="img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Bootstrap core CSS -->
   <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -94,9 +92,9 @@
               <h3>USER DASHBOARD</h3>
 
             </div>
-            <div class="content-panel">
+            <div id="stats" class="content-panel">
                 <h4>Here are your most recent statistics.</h4>
-                <h4><i class="fa fa-angle-right"></i> Your Answers</h4>
+                <div class="text-center"><h4><i class=""></i> Your Answers</h4></div>
                 <div class="panel-body text-center">
 
                   <canvas id="doughnut" height="300" width="400"></canvas>
@@ -108,6 +106,7 @@
                   <p style="display:inline">Total answers: </p><p style="display:inline" id="totalText">Test text</p>
                 </div>
               </div>
+              <h3 id="errorMsg"></h3>
             </div>
           </div>
             <!--custom chart end-->

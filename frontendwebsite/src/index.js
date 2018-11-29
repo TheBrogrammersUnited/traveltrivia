@@ -1,14 +1,18 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
+
 import JSON from './dbt.json';
 import QuestionD from './components/question_data';
 import 'tachyons';
+//COMPONENTS: no javascript extensions needed but others are
 import Header from './components/header';
 
 class App extends Component{
+
 	state={
 		questionData: JSON
 	}
+
 	render(){
 		return (
 				<div>
@@ -20,5 +24,6 @@ class App extends Component{
 			)
 	}
 }
+
 
 ReactDOM.render(<App/>,document.querySelector('#root'));

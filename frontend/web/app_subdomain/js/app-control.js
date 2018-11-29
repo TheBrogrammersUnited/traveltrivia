@@ -25,18 +25,27 @@ function onGetCorrectOrTotal()
 {
 	if(correct != -2 && total != -2)
 	{
-		document.getElementById("percent").innerText = ((correct/total)*100).toFixed(0);
-		var doughnutData = [
-	        {
-	            value: parseInt(correct),
-	            color:"#2ecc71"
-	        },
-	        {
-	            value : parseInt(total),
-	            color : "#CC2E89"
-	        }
-	    ];
-		new Chart(document.getElementById("doughnut").getContext("2d")).Doughnut(doughnutData);
+		if(parseInt(correct) != -1)
+		{
+			document.getElementById("percent").innerText = ((correct/total)*100).toFixed(0);
+			var doughnutData = [
+		        {
+		            value: parseInt(correct),
+		            color:"#2ecc71"
+		        },
+		        {
+		            value : parseInt(total),
+		            color : "#CC2E89"
+		        }
+		    ];
+			new Chart(document.getElementById("doughnut").getContext("2d")).Doughnut(doughnutData);
+		}
+		else
+		{
+			document.getElementById("stats").style.display = "none";
+			document.getElementById("errorMsg").innerText= "You haven't played TravelTrivia app! Download for iOS or Android today and try it out.";
+
+		}
 	}
 }
 
