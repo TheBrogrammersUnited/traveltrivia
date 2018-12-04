@@ -224,7 +224,9 @@ public class QuestionScene extends Activity implements RecognitionListener {
     public class AnswerHandler implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            recognizer.cancel();
+            if(recognizer != null) {
+                recognizer.cancel();
+            }
             answerButtonPressed = true;
             questionsAsked++;
             setButtonsEnabled(false);
@@ -627,12 +629,25 @@ public class QuestionScene extends Activity implements RecognitionListener {
                     case "bee":
                         setAnswerUsingVR(1);
                         return true;
+                    case "b":
+                        setAnswerUsingVR(1);
+                        return true;
                     case "see":
                         setAnswerUsingVR(2);
                         return true;
                     case "dee":
                         setAnswerUsingVR(3);
                         return true;
+                    case "d":
+                        setAnswerUsingVR(3);
+                        return true;
+                    case "de":
+                        setAnswerUsingVR(3);
+                        return true;
+                    case "di":
+                        setAnswerUsingVR(3);
+                        return true;
+
                 }
 
             }
